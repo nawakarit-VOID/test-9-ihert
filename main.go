@@ -17,18 +17,33 @@ func main() {
 	w := a.NewWindow("CPU Info")
 
 	// Labels
-	modelLabel := widget.NewLabel("CPU: loading...")
-	coreLabel := widget.NewLabel("Cores: ...")
-	threadLabel := widget.NewLabel("Threads: ...")
-	freqLabel := widget.NewLabel("Frequency: ...")
-	usageLabel := widget.NewLabel("Usage: ...")
+	//CPU
+	Vendorid := widget.NewLabel("Vendorid: ...") //VendorID
+	//Family
+	//Model
+	//Stepping
+	//PhysicalID
+	//CoreID
+	coresmain := widget.NewLabel("Coresmain: ...") //Cores
+	cpulabel := widget.NewLabel("CCCPU: ...")
+	modelLabel := widget.NewLabel("CPU: loading...") //ModelName
+	freqLabel := widget.NewLabel("Frequency: ...")   //Mhz
+	//CacheSize
+	//Flags
+	//Microcode
+	coreLabel := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
+	threadLabel := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
+	usageLabel := widget.NewLabel("Usage: ...")    //3*cpu.Percent()
 
 	content := container.NewVBox(
+		coresmain,
 		modelLabel,
 		coreLabel,
 		threadLabel,
 		freqLabel,
 		usageLabel,
+		cpulabel,
+		Vendorid,
 	)
 
 	w.SetContent(content)
@@ -39,10 +54,15 @@ func main() {
 	if len(info) > 0 {
 		modelLabel.SetText("CPU: " + info[0].ModelName)
 		freqLabel.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz))
+		//cpulabel.SetText(fmt.Sprintf("CCCPU: %.2f ", info[0].VendorID))
+		Vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))
+		for {
+			coresmain.SetText(fmt.Sprintf("Coresmain: %d", info[0].Cores))
+		}
 	}
 
-	cores, _ := cpu.Counts(false)
-	threads, _ := cpu.Counts(true)
+	cores, _ := cpu.Counts(false)  //Physical Cores /false = คอร์จริง
+	threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
 
 	coreLabel.SetText(fmt.Sprintf("Cores: %d", cores))
 	threadLabel.SetText(fmt.Sprintf("Threads: %d", threads))
