@@ -17,32 +17,51 @@ func main() {
 	w := a.NewWindow("CPU Info")
 
 	// Labels
-	//CPU
-	Vendorid := widget.NewLabel("Vendorid: ...") //VendorID
-	//Family
-	//Model
-	//Stepping
-	//PhysicalID
-	//CoreID
-	coresmain := widget.NewLabel("Coresmain: ...") //Cores
-	cpulabel := widget.NewLabel("CCCPU: ...")
-	modelLabel := widget.NewLabel("CPU: loading...") //ModelName
-	freqLabel := widget.NewLabel("Frequency: ...")   //Mhz
-	//CacheSize
-	//Flags
-	//Microcode
-	coreLabel := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
-	threadLabel := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
-	usageLabel := widget.NewLabel("Usage: ...")    //3*cpu.Percent()
+	// cpu.Info()
+	//CPU - หมายเลข CPU
+	Vendorid := widget.NewLabel("Vendorid: ...") //VendorID - ผู้ผลิต CPU
+	//Family - CPU family
+	//Model - model id
+	//Stepping - stepping version
+	//PhysicalID - socket id
+	//CoreID - core id
+	coresmain := widget.NewLabel("Coresmain: ...")       //Cores - จำนวน core
+	modelNameLabel := widget.NewLabel("CPU: loading...") //ModelName - ชื่อ CPU เต็ม
+	freqLabel := widget.NewLabel("Frequency: ...")       //Mhz - ความเร็ว MHz
+	//CacheSize - cache size
+	//Flags - feature flags
+	//Microcode - microcode version
+
+	// cpu.Counts()
+	coreCountsLabel := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
+	threadCountsLabel := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
+	//cpu.Percent()
+	usageLabel := widget.NewLabel("Usage: ...") //3*cpu.Percent()
+	//cpu.Times()
 
 	content := container.NewVBox(
-		coresmain,
-		modelLabel,
-		coreLabel,
-		threadLabel,
+		//cpu.Info()
+		coresmain, //CPU
+		//VendorID	ผู้ผลิต CPU
+		//Family	CPU family
+		//Model	model id
+		//Stepping	stepping version
+		//PhysicalID	socket id
+		//CoreID	core id
+		//Cores	จำนวน core
+		modelNameLabel, //ModelName	ชื่อ CPU เต็ม
+		//Mhz	ความเร็ว MHz
+		//CacheSize	cache size
+		//Flags	feature flags
+		//Microcode	microcode version
+
+		//cpu.Counts()
+		coreCountsLabel,
+		threadCountsLabel,
 		freqLabel,
+		//cpu.Percent()
 		usageLabel,
-		cpulabel,
+		//cpu.Times()
 		Vendorid,
 	)
 
@@ -52,20 +71,20 @@ func main() {
 	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
 	if len(info) > 0 {
-		modelLabel.SetText("CPU: " + info[0].ModelName)
+		modelNameLabel.SetText("CPU: " + info[0].ModelName)
 		freqLabel.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz))
 		//cpulabel.SetText(fmt.Sprintf("CCCPU: %.2f ", info[0].VendorID))
 		Vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))
-		for {
+		/*for {
 			coresmain.SetText(fmt.Sprintf("Coresmain: %d", info[0].Cores))
-		}
+		}*/
 	}
 
 	cores, _ := cpu.Counts(false)  //Physical Cores /false = คอร์จริง
 	threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
 
-	coreLabel.SetText(fmt.Sprintf("Cores: %d", cores))
-	threadLabel.SetText(fmt.Sprintf("Threads: %d", threads))
+	coreCountsLabel.SetText(fmt.Sprintf("Cores: %d", cores))
+	threadCountsLabel.SetText(fmt.Sprintf("Threads: %d", threads))
 
 	// 🔄 loop อัปเดต usage
 	go func() {
