@@ -78,13 +78,12 @@ func main() {
 
 	if len(info) > 0 { // cpu.Info()
 
-		modelName.SetText("CPU: " + info[0].ModelName) //ModelName
+		//modelName.SetText("CPU: " + info[0].ModelName) //ModelName
+		modelName := info[0].ModelName
 
 		//freq.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz)) //Mhz
 		freqSizeGhz := info[0].Mhz / 1000
-		freq.SetText(fmt.Sprintf("Turbo Boost : %.2f GHz", freqSizeGhz)) //Ghz
-
-		infoLabel.SetText(fmt.Sprintf("%.2f", freqSizeGhz))
+		//freq.SetText(fmt.Sprintf("Turbo Boost : %.2f GHz", freqSizeGhz)) //Ghz
 
 		var cpucpuresult string
 		for i, cpucpu := range info {
@@ -92,12 +91,16 @@ func main() {
 		}
 		cpunumber.SetText(cpucpuresult) // CPU - หมายเลข CPU
 
-		vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))          //VendorID
-		cpufamily.SetText(fmt.Sprintf("Family: %s", info[0].Family))           //Family	CPU family
-		modelid.SetText(fmt.Sprintf("Model: %s", info[0].Model))               //Model	model id
-		steppingversion.SetText(fmt.Sprintf("Stepping: %d", info[0].Stepping)) //Stepping	stepping version
-
+		//vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))          //VendorID
+		vendorid := info[0].VendorID
+		//cpufamily.SetText(fmt.Sprintf("Family: %s", info[0].Family)) //Family	CPU family
+		cpufamily := info[0].Family
+		//modelid.SetText(fmt.Sprintf("Model: %s", info[0].Model)) //Model	model id
+		modelid := info[0].Model
+		//steppingversion.SetText(fmt.Sprintf("Stepping: %d", info[0].Stepping)) //Stepping	stepping version
+		steppingversion := info[0].Stepping
 		// PhysicalID	socket id
+
 		var socketidresult string
 		for i, cpu := range info {
 			socketidresult += fmt.Sprintf("Info [%d], PhysicalID:  %s\n", i, cpu.PhysicalID)
@@ -145,51 +148,54 @@ func main() {
 			coresmain.SetText(fmt.Sprintf("Coresmain: %d", info[0].Cores))
 		}*/
 
-	}
+		//cpu.Counts()
+		cores, _ := cpu.Counts(false) //Physical Cores /false = คอร์จริง
+		coreCounts.SetText(fmt.Sprintf("Cores: %d", cores))
 
-	//cpu.Counts()
-	cores, _ := cpu.Counts(false) //Physical Cores /false = คอร์จริง
-	coreCounts.SetText(fmt.Sprintf("Cores: %d", cores))
+		threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
+		threadCounts.SetText(fmt.Sprintf("Threads: %d", threads))
 
-	threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
-	threadCounts.SetText(fmt.Sprintf("Threads: %d", threads))
+		//cpu.Percent()
+		// 🔄 loop อัปเดต usage
+		go func() {
+			for {
 
-	//cpu.Percent()
-	// 🔄 loop อัปเดต usage
-	go func() {
-		for {
+				percent, _ := cpu.Percent(1*time.Second, false)
+				if len(percent) > 0 {
+					usage := percent[0]
 
-			percent, _ := cpu.Percent(1*time.Second, false)
-			if len(percent) > 0 {
-				usage := percent[0]
+					fyne.Do(func() {
+						usageLabel.SetText(fmt.Sprintf("Usage: %.2f%%", usage))
+					})
+				}
+			}
+		}()
 
+		//usagePercentLabel
+
+		go func() {
+			for {
+
+				// ดึง CPU usage ต่อ core
+				percent, _ := cpu.Percent(time.Second, true) // true = per core
+				var builder strings.Builder
+
+				for i, usage := range percent {
+					builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
+				}
 				fyne.Do(func() {
-					usageLabel.SetText(fmt.Sprintf("Usage: %.2f%%", usage))
+
+					usagePercentLabel.SetText(builder.String())
 				})
 			}
-		}
-	}()
+		}()
 
-	//usagePercentLabel
+		//cpu.Times()
 
-	go func() {
-		for {
+		infoLabel.SetText(fmt.Sprintf("%s | [%.2fGHz]\nCore: [%d] Threade: [%d]\nVendor: %s\nFamily: %s | Model: %s | Stepping: %d",
+			modelName, freqSizeGhz, cores, threads, vendorid, cpufamily, modelid, steppingversion)) //รวม
 
-			// ดึง CPU usage ต่อ core
-			percent, _ := cpu.Percent(time.Second, true) // true = per core
-			var builder strings.Builder
-
-			for i, usage := range percent {
-				builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
-			}
-			fyne.Do(func() {
-
-				usagePercentLabel.SetText(builder.String())
-			})
-		}
-	}()
-
-	//cpu.Times()
+	}
 
 	w.ShowAndRun()
 }
