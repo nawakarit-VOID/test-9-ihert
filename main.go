@@ -19,25 +19,26 @@ func main() {
 
 	// Labels
 	infoLabel := widget.NewLabel("...")
+	flagsLabel := widget.NewLabel("...")
 
 	// cpu.Info()
-	cpunumber := widget.NewLabel("CPUnumber: ...")               //CPU - หมายเลข CPU
-	vendorid := widget.NewLabel("Vendorid: ...")                 //VendorID - ผู้ผลิต CPU
-	cpufamily := widget.NewLabel("CPUfamily: ...")               //Family - CPU family
-	modelid := widget.NewLabel("Modelid: ...")                   //Model - model id
-	steppingversion := widget.NewLabel("Stepping version: ...")  //Stepping - stepping version
-	socketid := widget.NewLabel("Socketid: ...")                 //PhysicalID - socket id
-	coreid := widget.NewLabel("Coreid: ...")                     //CoreID - core id
-	coresmain := widget.NewLabel("Coresmain: ...")               //Cores - จำนวน core
-	modelName := widget.NewLabel("CPU: loading...")              //ModelName - ชื่อ CPU เต็ม
-	freq := widget.NewLabel("Frequency: ...")                    //Mhz - ความเร็ว MHz
-	cacheSize := widget.NewLabel("CacheSize: ...")               //CacheSize - cache size
-	featureflags := widget.NewLabel("FeatureFlags: ...")         //Flags - feature flags
-	microcodeVersion := widget.NewLabel("MicrocodeVersion: ...") //Microcode - microcode version
+	cpunumber := widget.NewLabel("CPUnumber: ...") //CPU - หมายเลข CPU
+	//vendorid := widget.NewLabel("Vendorid: ...")                 //VendorID - ผู้ผลิต CPU
+	//cpufamily := widget.NewLabel("CPUfamily: ...")               //Family - CPU family
+	//modelid := widget.NewLabel("Modelid: ...")                   //Model - model id
+	//steppingversion := widget.NewLabel("Stepping version: ...")  //Stepping - stepping version
+	socketid := widget.NewLabel("Socketid: ...")   //PhysicalID - socket id
+	coreid := widget.NewLabel("Coreid: ...")       //CoreID - core id
+	coresmain := widget.NewLabel("Coresmain: ...") //Cores - จำนวน core
+	//modelName := widget.NewLabel("CPU: loading...")              //ModelName - ชื่อ CPU เต็ม
+	//freq := widget.NewLabel("Frequency: ...")                    //Mhz - ความเร็ว MHz
+	//cacheSize := widget.NewLabel("CacheSize: ...")               //CacheSize - cache size
+	//featureflags := widget.NewLabel("FeatureFlags: ...") //Flags - feature flags
+	//microcodeVersion := widget.NewLabel("MicrocodeVersion: ...") //Microcode - microcode version
 
 	// cpu.Counts()
-	coreCounts := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
-	threadCounts := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
+	//coreCounts := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
+	//threadCounts := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
 	//cpu.Percent()
 	usageLabel := widget.NewLabel("Usage: ...") //3*cpu.Percent()
 	usagePercentLabel := widget.NewLabel("usagePercentLabel : ...")
@@ -46,23 +47,24 @@ func main() {
 	content := container.NewScroll(container.NewVBox(
 		//cpu.Info()
 		infoLabel,
-		cpunumber,        //CPU - หมายเลข CPU
-		vendorid,         //VendorID	ผู้ผลิต CPU
-		cpufamily,        //Family	CPU family
-		modelid,          //Model	model id
-		steppingversion,  //Stepping	stepping version
-		socketid,         //PhysicalID	socket id
-		coreid,           //CoreID	core id
-		coresmain,        //Cores	จำนวน core
-		modelName,        //ModelName	ชื่อ CPU เต็ม
-		freq,             //Mhz	ความเร็ว MHz
-		cacheSize,        //CacheSize	cache size
-		featureflags,     //Flags	feature flags
-		microcodeVersion, //Microcode	microcode version
+		flagsLabel,
+		cpunumber, //CPU - หมายเลข CPU
+		//vendorid,         //VendorID	ผู้ผลิต CPU
+		//cpufamily,        //Family	CPU family
+		//modelid,          //Model	model id
+		//steppingversion,  //Stepping	stepping version
+		socketid,  //PhysicalID	socket id
+		coreid,    //CoreID	core id
+		coresmain, //Cores	จำนวน core
+		//modelName,        //ModelName	ชื่อ CPU เต็ม
+		//freq,             //Mhz	ความเร็ว MHz
+		//cacheSize,        //CacheSize	cache size
+		//featureflags, //Flags	feature flags
+		//microcodeVersion, //Microcode	microcode version
 
 		//cpu.Counts()
-		coreCounts,
-		threadCounts,
+		//coreCounts,
+		//threadCounts,
 		//cpu.Percent()
 		usageLabel,
 		usagePercentLabel,
@@ -121,22 +123,24 @@ func main() {
 		coresmain.SetText(cpucoreresult) //Cores	จำนวน core
 
 		cacheSizeMB := info[0].CacheSize / 1024
-		cacheSize.SetText(fmt.Sprintf("cacheSize: %d MB", cacheSizeMB)) //CacheSize
-		/*
-			flagsStr := ""
-			for i, flag := range info[0].Flags {
-				flagsStr += flag
-				if (i+1)%5 == 0 { // ทีละ 5 flags ต่อบรรทัด
-					flagsStr += "\n"
-				} else {
-					flagsStr += " "
-				}
-			}
-			featureflags.SetText(fmt.Sprintf("Flags:\n%s", flagsStr)) //Flags
-		*/
-		featureflags.SetText(fmt.Sprintf("Flags: %v", info[0].Flags)) //Flags
+		//cacheSize.SetText(fmt.Sprintf("cacheSize: %d MB", cacheSizeMB)) //CacheSize
 
-		microcodeVersion.SetText(fmt.Sprintf("microcodeVersion: %s", info[0].Microcode)) //Microcode
+		flagsStr := ""
+		for i, flag := range info[0].Flags {
+			flagsStr += flag
+			if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
+				flagsStr += "\n"
+			} else {
+				flagsStr += " "
+			}
+		}
+
+		//featureflags.SetText(fmt.Sprintf("Flags:\n%s", flagsStr)) //Flags
+
+		//featureflags.SetText(fmt.Sprintf("Flags: %v", info[0].Flags)) //Flags
+
+		microcodeVersion := info[0].Microcode
+		//microcodeVersion.SetText(fmt.Sprintf("microcodeVersion: %s", info[0].Microcode)) //Microcode
 
 		/*
 			cacheSize,        //CacheSize	cache size
@@ -150,10 +154,10 @@ func main() {
 
 		//cpu.Counts()
 		cores, _ := cpu.Counts(false) //Physical Cores /false = คอร์จริง
-		coreCounts.SetText(fmt.Sprintf("Cores: %d", cores))
+		//coreCounts.SetText(fmt.Sprintf("Cores: %d", cores))
 
 		threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
-		threadCounts.SetText(fmt.Sprintf("Threads: %d", threads))
+		//threadCounts.SetText(fmt.Sprintf("Threads: %d", threads))
 
 		//cpu.Percent()
 		// 🔄 loop อัปเดต usage
@@ -165,7 +169,7 @@ func main() {
 					usage := percent[0]
 
 					fyne.Do(func() {
-						usageLabel.SetText(fmt.Sprintf("Usage: %.2f%%", usage))
+						usageLabel.SetText(fmt.Sprintf("CPU Avg: %.2f%%", usage))
 					})
 				}
 			}
@@ -192,8 +196,12 @@ func main() {
 
 		//cpu.Times()
 
-		infoLabel.SetText(fmt.Sprintf("%s | [%.2fGHz]\nCore: [%d] Threade: [%d]\nVendor: %s\nFamily: %s | Model: %s | Stepping: %d",
-			modelName, freqSizeGhz, cores, threads, vendorid, cpufamily, modelid, steppingversion)) //รวม
+		infoLabel.SetText(
+			fmt.Sprintf(
+				"%s | [%.2fGHz]\nCore: [%d] Threade: [%d]\nVendor: %s\nFamily: %s | Model: %s | Stepping: %d\ncacheSize: %d MB | microcodeVersion: %s",
+				modelName, freqSizeGhz, cores, threads, vendorid, cpufamily, modelid, steppingversion, cacheSizeMB, microcodeVersion)) //รวม
+
+		flagsLabel.SetText(fmt.Sprintf("FeatureFlags: ═══════════════════════════════╗\n%s", flagsStr))
 
 	}
 
