@@ -18,6 +18,8 @@ func main() {
 	w := a.NewWindow("CPU Info")
 
 	// Labels
+	infoLabel := widget.NewLabel("...")
+
 	// cpu.Info()
 	cpunumber := widget.NewLabel("CPUnumber: ...")               //CPU - หมายเลข CPU
 	vendorid := widget.NewLabel("Vendorid: ...")                 //VendorID - ผู้ผลิต CPU
@@ -41,8 +43,9 @@ func main() {
 	usagePercentLabel := widget.NewLabel("usagePercentLabel : ...")
 	//cpu.Times()
 
-	content := container.NewVBox(
+	content := container.NewScroll(container.NewVBox(
 		//cpu.Info()
+		infoLabel,
 		cpunumber,        //CPU - หมายเลข CPU
 		vendorid,         //VendorID	ผู้ผลิต CPU
 		cpufamily,        //Family	CPU family
@@ -65,15 +68,23 @@ func main() {
 		usagePercentLabel,
 		//cpu.Times()
 
-	)
+	))
 
-	w.SetContent(content)
-	w.Resize(fyne.NewSize(400, 200))
+	w.SetContent(container.NewBorder(nil, nil, nil, nil, content))
+	w.Resize(fyne.NewSize(600, 600))
 
 	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
 
 	if len(info) > 0 { // cpu.Info()
+
+		modelName.SetText("CPU: " + info[0].ModelName) //ModelName
+
+		//freq.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz)) //Mhz
+		freqSizeGhz := info[0].Mhz / 1000
+		freq.SetText(fmt.Sprintf("Turbo Boost : %.2f GHz", freqSizeGhz)) //Ghz
+
+		infoLabel.SetText(fmt.Sprintf("%.2f", freqSizeGhz))
 
 		var cpucpuresult string
 		for i, cpucpu := range info {
@@ -105,9 +116,6 @@ func main() {
 			cpucoreresult += fmt.Sprintf("info: [%d] ,cpu core: %d\n", i, cpucpu.Cores)
 		}
 		coresmain.SetText(cpucoreresult) //Cores	จำนวน core
-
-		modelName.SetText("CPU: " + info[0].ModelName)                //ModelName
-		freq.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz)) //Mhz
 
 		cacheSizeMB := info[0].CacheSize / 1024
 		cacheSize.SetText(fmt.Sprintf("cacheSize: %d MB", cacheSizeMB)) //CacheSize
