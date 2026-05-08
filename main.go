@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -37,6 +38,7 @@ func main() {
 	threadCounts := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
 	//cpu.Percent()
 	usageLabel := widget.NewLabel("Usage: ...") //3*cpu.Percent()
+	usagePercentLabel := widget.NewLabel("usagePercentLabel : ...")
 	//cpu.Times()
 
 	content := container.NewVBox(
@@ -60,6 +62,7 @@ func main() {
 		threadCounts,
 		//cpu.Percent()
 		usageLabel,
+		usagePercentLabel,
 		//cpu.Times()
 
 	)
@@ -71,6 +74,7 @@ func main() {
 	info, _ := cpu.Info()
 
 	if len(info) > 0 { // cpu.Info()
+
 		var cpucpuresult string
 		for i, cpucpu := range info {
 			cpucpuresult += fmt.Sprintf("info[%d]:  CPU=%d\n", i, cpucpu.CPU)
@@ -78,11 +82,23 @@ func main() {
 		cpunumber.SetText(cpucpuresult) // CPU - หมายเลข CPU
 
 		vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))          //VendorID
-		cpufamily.SetText(fmt.Sprintf("Family: %s Family", info[0].Family))    //Family	CPU family
+		cpufamily.SetText(fmt.Sprintf("Family: %s", info[0].Family))           //Family	CPU family
 		modelid.SetText(fmt.Sprintf("Model: %s", info[0].Model))               //Model	model id
 		steppingversion.SetText(fmt.Sprintf("Stepping: %d", info[0].Stepping)) //Stepping	stepping version
-		socketid.SetText(fmt.Sprintf("PhysicalID: %s", info[0].PhysicalID))    //PhysicalID	socket id
-		coreid.SetText(fmt.Sprintf("CoreID: %s", info[0].CoreID))              //CoreID	core id
+
+		// PhysicalID	socket id
+		var socketidresult string
+		for i, cpu := range info {
+			socketidresult += fmt.Sprintf("Info [%d], PhysicalID:  %s\n", i, cpu.PhysicalID)
+		}
+		socketid.SetText(socketidresult)
+
+		//CoreID	core id
+		var coreidresult string
+		for i, cpu := range info {
+			coreidresult += fmt.Sprintf("Info [%d], CoreID %s\n", i, cpu.CoreID)
+		}
+		coreid.SetText(coreidresult)
 
 		var cpucoreresult string
 		for i, cpucpu := range info {
@@ -92,9 +108,24 @@ func main() {
 
 		modelName.SetText("CPU: " + info[0].ModelName)                //ModelName
 		freq.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz)) //Mhz
-		//CacheSize
-		//Flags
-		//Microcode
+
+		cacheSizeMB := info[0].CacheSize / 1024
+		cacheSize.SetText(fmt.Sprintf("cacheSize: %d MB", cacheSizeMB)) //CacheSize
+		/*
+			flagsStr := ""
+			for i, flag := range info[0].Flags {
+				flagsStr += flag
+				if (i+1)%5 == 0 { // ทีละ 5 flags ต่อบรรทัด
+					flagsStr += "\n"
+				} else {
+					flagsStr += " "
+				}
+			}
+			featureflags.SetText(fmt.Sprintf("Flags:\n%s", flagsStr)) //Flags
+		*/
+		featureflags.SetText(fmt.Sprintf("Flags: %v", info[0].Flags)) //Flags
+
+		microcodeVersion.SetText(fmt.Sprintf("microcodeVersion: %s", info[0].Microcode)) //Microcode
 
 		/*
 			cacheSize,        //CacheSize	cache size
@@ -128,6 +159,25 @@ func main() {
 					usageLabel.SetText(fmt.Sprintf("Usage: %.2f%%", usage))
 				})
 			}
+		}
+	}()
+
+	//usagePercentLabel
+
+	go func() {
+		for {
+
+			// ดึง CPU usage ต่อ core
+			percent, _ := cpu.Percent(time.Second, true) // true = per core
+			var builder strings.Builder
+
+			for i, usage := range percent {
+				builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
+			}
+			fyne.Do(func() {
+
+				usagePercentLabel.SetText(builder.String())
+			})
 		}
 	}()
 
