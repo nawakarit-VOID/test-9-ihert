@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -21,7 +20,7 @@ func main() {
 	InfoLabel := widget.NewLabel("...")
 	flagsLabel := widget.NewLabel("...")
 	//detailLabel := widget.NewLabel("...")
-	coresthread := widget.NewLabel("...")
+	//coresthread := widget.NewLabel("...")
 
 	// cpu.Info()
 	//cpunumber := widget.NewLabel("CPUnumber: ...") //CPU - หมายเลข CPU
@@ -49,7 +48,7 @@ func main() {
 	content := container.NewScroll(container.NewVBox(
 		//cpu.Info()
 		InfoLabel,
-		coresthread,
+		//coresthread,
 		//cpu.Percent()
 		usageLabel,
 		usagePercentLabel,
@@ -177,19 +176,24 @@ func main() {
 			}
 		}()
 		//usagePercentLabel
+
 		go func() {
 			for {
 
+				var cpuusagePercentresult string
 				// ดึง CPU usage ต่อ core
 				percent, _ := cpu.Percent(time.Second, true) // true = per core
-				var builder strings.Builder
-
+				//var builder strings.Builder
+				// ✅ reset ก่อนใช้
+				cpuusagePercentresult = ""
 				for i, usage := range percent {
-					builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
+					//builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
+					cpuusagePercentresult += fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage)
 				}
 				fyne.Do(func() {
 
-					usagePercentLabel.SetText(builder.String())
+					//usagePercentLabel.SetText(builder.String())
+					usagePercentLabel.SetText(cpuusagePercentresult)
 				})
 			}
 		}()
@@ -204,15 +208,15 @@ func main() {
 		var cpucoreresult string
 		//cpucoreresult += fmt.Sprintf("Physical Cores: %d\n", physical)
 		//cpucoreresult += fmt.Sprintf("Logical Cores: %d\n", logical)
-		cpucoreresult += fmt.Sprintf("Hyperthreading: %v\n\nDetails: ═════════════════╗\n", threads > cores)
+		//cpucoreresult += fmt.Sprintf("Hyperthreading: %v\nDetails: ═════════════════╗\n", threads > cores)
 
 		// แสดงรายละเอียดแต่ละ thread
 		//cpucoreresult += fmt.Sprint("\nDetails: ------------------------\n")
 		for i, cpu := range info {
-			cpucoreresult += fmt.Sprintf("Thread [%d]: Socket=%s, Core=%s\n",
-				i, cpu.PhysicalID, cpu.CoreID)
+			cpucoreresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
+				i, cpu.CoreID, cpu.PhysicalID)
 		}
-		coresthread.SetText(cpucoreresult)
+		//coresthread.SetText(cpucoreresult)
 
 		//cpu.Times()
 
@@ -222,8 +226,10 @@ func main() {
 		infoLabel += fmt.Sprintf("Vendor: %s\n", vendorid)
 		infoLabel += fmt.Sprintf("Family: %s | Model: %s | Stepping: %d\n", cpufamily, modelid, steppingversion)
 		infoLabel += fmt.Sprintf("cacheSize: %d MB | microcodeVersion: %s\n", cacheSizeMB, microcodeVersion)
-		//infoLabel += fmt.Sprintf("")
+		infoLabel += fmt.Sprintf("\nHyperthreading: %v\nDetails: ════════════════════╗\n", threads > cores)
+		infoLabel += fmt.Sprintf("%s", cpucoreresult)
 
+		//infoLabel += fmt.Sprintf("")
 		InfoLabel.SetText(infoLabel)
 
 		flagsLabel.SetText(fmt.Sprintf("FeatureFlags: ═══════════════════════════════╗\n%s", flagsStr))
