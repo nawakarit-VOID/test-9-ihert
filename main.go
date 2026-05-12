@@ -187,21 +187,21 @@ func main() {
 		//cpu.Times()
 
 		var infoLabel string
-		infoLabel += fmt.Sprintf("%s | [ %.2fGHz ]\n", modelName, freqSizeGhz)
+		infoLabel += fmt.Sprintf("%s | [ %.2fGHz ]\n\n", modelName, freqSizeGhz)
 		infoLabel += fmt.Sprintf("Core: [ %d ]\n", cores)
 		infoLabel += fmt.Sprintf("Threade: [ %d ]\n", threads)
 		infoLabel += fmt.Sprintf("Vendor: [ %s ]\n", vendorid)
 		infoLabel += fmt.Sprintf("Family: [ %s ]\n", cpufamily)
 		infoLabel += fmt.Sprintf("Model: [ %s ]\n", modelid)
 		infoLabel += fmt.Sprintf("Stepping: [ %d ]\n", steppingversion)
-		infoLabel += fmt.Sprintf("cacheSize: [ %d ] MB\n", cacheSizeMB)
-		infoLabel += fmt.Sprintf("microcodeVersion: [ %s ]\n", microcodeVersion)
+		infoLabel += fmt.Sprintf("CacheSize: [ %d ] MB\n", cacheSizeMB)
+		infoLabel += fmt.Sprintf("MicrocodeVersion: [ %s ]\n", microcodeVersion)
 		//infoLabel += fmt.Sprintf("")
 		overview.SetText(infoLabel)
 
 		var detailLabel string
 		detailLabel += fmt.Sprintf("Hyperthreading: [ %v ]", threads > cores)
-		detailLabel += ("\n\n[  Thread  ] [  Core  ] [  Socket  ]\n")
+		detailLabel += ("\n\n[  Thread  ] : [ Core ] : [ Socket ]\n")
 		detailLabel += fmt.Sprintf("%s", cpuThreadCoreSocketresult)
 
 		detail.SetText(detailLabel)
@@ -209,13 +209,17 @@ func main() {
 		flagsLabel.SetText(fmt.Sprintf("%s", flagsStr))
 
 	}
+	cpuuse := container.NewScroll(
+		container.NewVBox(
+			usageLabel,
+			usagePercentLabel))
 
 	cpu := container.NewAppTabs(
 		//container.NewScroll(container.NewVBox(
 
 		//widget.NewRichTextFromMarkdown("# CPU Overview"),
 		//cpu.Info()
-		container.NewTabItem("CPU Overview", container.NewScroll(overview)),
+		container.NewTabItem("Overview", container.NewScroll(overview)),
 		//InfoLabel,
 		//coresthread,
 		//cpu.Percent()
@@ -224,9 +228,9 @@ func main() {
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsLabel)),
 		//flagsLabel,
 
-		container.NewTabItem("CPU", container.NewScroll(usageLabel)),
+		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		//usageLabel,
-		container.NewTabItem("CPU", container.NewScroll(usagePercentLabel)),
+		//container.NewTabItem("CPU", container.NewScroll(nil)),
 		//usagePercentLabel,
 
 		///cpunumber, //CPU - หมายเลข CPU
