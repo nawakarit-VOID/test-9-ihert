@@ -17,8 +17,9 @@ func main() {
 	w := a.NewWindow("CPU Info")
 
 	// Labels
-	InfoLabel := widget.NewLabel("...")
-	flagsLabel := widget.NewLabel("...")
+	overview := widget.NewLabel("overview...")
+	detail := widget.NewLabel("detail...")
+	flagsLabel := widget.NewLabel("flags.feature...")
 	//detailLabel := widget.NewLabel("...")
 	//coresthread := widget.NewLabel("...")
 
@@ -41,8 +42,8 @@ func main() {
 	//coreCounts := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
 	//threadCounts := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
 	//cpu.Percent()
-	usageLabel := widget.NewLabel("Usage: ...") //3*cpu.Percent()
-	usagePercentLabel := widget.NewLabel("usagePercentLabel : ...")
+	usageLabel := widget.NewLabel("Usage...") //3*cpu.Percent()
+	usagePercentLabel := widget.NewLabel("Usage.PercentLabel...")
 	//cpu.Times()
 
 	// โหลดข้อมูล CPU static
@@ -170,15 +171,15 @@ func main() {
 		threads, _ := cpu.Counts(true) //Logical Cores /true = รวมคอร์ที่มี Hyperthreading ด้วย หรือ(threads)
 		//threadCounts.SetText(fmt.Sprintf("Threads: %d", threads))
 
-		var cpucoreresult string
-		//cpucoreresult += fmt.Sprintf("Physical Cores: %d\n", physical)
-		//cpucoreresult += fmt.Sprintf("Logical Cores: %d\n", logical)
-		//cpucoreresult += fmt.Sprintf("Hyperthreading: %v\nDetails: ═════════════════╗\n", threads > cores)
+		var cpuThreadCoreSocketresult string
+		//cpuThreadCoreSocketresult += fmt.Sprintf("Physical Cores: %d\n", physical)
+		//cpuThreadCoreSocketresult += fmt.Sprintf("Logical Cores: %d\n", logical)
+		//cpuThreadCoreSocketresult += fmt.Sprintf("Hyperthreading: %v\nDetails: ═════════════════╗\n", threads > cores)
 
 		// แสดงรายละเอียดแต่ละ thread
-		//cpucoreresult += fmt.Sprint("\nDetails: ------------------------\n")
+		//cpuThreadCoreSocketresult += fmt.Sprint("\nDetails: ------------------------\n")
 		for i, cpu := range info {
-			cpucoreresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
+			cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
 				i, cpu.CoreID, cpu.PhysicalID)
 		}
 		//coresthread.SetText(cpucoreresult)
@@ -186,30 +187,47 @@ func main() {
 		//cpu.Times()
 
 		var infoLabel string
-		infoLabel += fmt.Sprintf("%s | [%.2fGHz]\n", modelName, freqSizeGhz)
-		infoLabel += fmt.Sprintf("Core: [%d] Threade: [%d]\n", cores, threads)
-		infoLabel += fmt.Sprintf("Vendor: %s\n", vendorid)
-		infoLabel += fmt.Sprintf("Family: %s | Model: %s | Stepping: %d\n", cpufamily, modelid, steppingversion)
-		infoLabel += fmt.Sprintf("cacheSize: %d MB | microcodeVersion: %s\n", cacheSizeMB, microcodeVersion)
-		infoLabel += fmt.Sprintf("\nHyperthreading: %v\nDetails: ════════════════════╗\n", threads > cores)
-		infoLabel += fmt.Sprintf("%s", cpucoreresult)
-
+		infoLabel += fmt.Sprintf("%s | [ %.2fGHz ]\n", modelName, freqSizeGhz)
+		infoLabel += fmt.Sprintf("Core: [ %d ]\n", cores)
+		infoLabel += fmt.Sprintf("Threade: [ %d ]\n", threads)
+		infoLabel += fmt.Sprintf("Vendor: [ %s ]\n", vendorid)
+		infoLabel += fmt.Sprintf("Family: [ %s ]\n", cpufamily)
+		infoLabel += fmt.Sprintf("Model: [ %s ]\n", modelid)
+		infoLabel += fmt.Sprintf("Stepping: [ %d ]\n", steppingversion)
+		infoLabel += fmt.Sprintf("cacheSize: [ %d ] MB\n", cacheSizeMB)
+		infoLabel += fmt.Sprintf("microcodeVersion: [ %s ]\n", microcodeVersion)
 		//infoLabel += fmt.Sprintf("")
-		InfoLabel.SetText(infoLabel)
+		overview.SetText(infoLabel)
 
-		flagsLabel.SetText(fmt.Sprintf("FeatureFlags: ═══════════════════════════════╗\n%s", flagsStr))
+		var detailLabel string
+		detailLabel += fmt.Sprintf("Hyperthreading: [ %v ]", threads > cores)
+		detailLabel += ("\n\n[  Thread  ] [  Core  ] [  Socket  ]\n")
+		detailLabel += fmt.Sprintf("%s", cpuThreadCoreSocketresult)
+
+		detail.SetText(detailLabel)
+
+		flagsLabel.SetText(fmt.Sprintf("%s", flagsStr))
 
 	}
 
-	content := container.NewScroll(container.NewVBox(
+	cpu := container.NewAppTabs(
+		//container.NewScroll(container.NewVBox(
+
+		//widget.NewRichTextFromMarkdown("# CPU Overview"),
 		//cpu.Info()
-		InfoLabel,
+		container.NewTabItem("CPU Overview", container.NewScroll(overview)),
+		//InfoLabel,
 		//coresthread,
 		//cpu.Percent()
-		usageLabel,
-		usagePercentLabel,
+		container.NewTabItem("Detail", container.NewScroll(detail)),
 
-		flagsLabel,
+		container.NewTabItem("Flags Feature", container.NewScroll(flagsLabel)),
+		//flagsLabel,
+
+		container.NewTabItem("CPU", container.NewScroll(usageLabel)),
+		//usageLabel,
+		container.NewTabItem("CPU", container.NewScroll(usagePercentLabel)),
+		//usagePercentLabel,
 
 		///cpunumber, //CPU - หมายเลข CPU
 		//vendorid,         //VendorID	ผู้ผลิต CPU
@@ -231,9 +249,18 @@ func main() {
 
 		//cpu.Times()
 
-	))
+	)
 
-	w.SetContent(container.NewBorder(nil, nil, nil, nil, content))
+	tabs := container.NewAppTabs(
+		container.NewTabItem("CPU", container.NewScroll(cpu)),
+		//container.NewTabItem("Cache", container.NewScroll(nil)),
+		//container.NewTabItem("Features", nil),
+		//container.NewTabItem("Security", container.NewScroll(nil)),
+		//container.NewTabItem("Virtualization", container.NewScroll(nil)),
+	)
+
+	//w.SetContent(container.NewBorder(nil, nil, nil, nil, cpu))
+	w.SetContent(tabs)
 	w.Resize(fyne.NewSize(600, 600))
 	w.ShowAndRun()
 }
