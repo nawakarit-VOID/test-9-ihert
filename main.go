@@ -16,13 +16,14 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
+	fmt.Println(DisplayCPUInfo())
+
 	// Labels
 	overview := widget.NewLabel("overview...")
 	detail := widget.NewLabel("detail...")
 	flagsLabel := widget.NewLabel("flags.feature...")
 	//detailLabel := widget.NewLabel("...")
 	//coresthread := widget.NewLabel("...")
-
 	// cpu.Info()
 	//cpunumber := widget.NewLabel("CPUnumber: ...") //CPU - หมายเลข CPU
 	//vendorid := widget.NewLabel("Vendorid: ...")                 //VendorID - ผู้ผลิต CPU
@@ -223,6 +224,8 @@ func main() {
 		//InfoLabel,
 		//coresthread,
 		//cpu.Percent()
+		//container.NewTabItem("Cache", container.NewScroll(nil)),
+
 		container.NewTabItem("Detail", container.NewScroll(detail)),
 
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsLabel)),
