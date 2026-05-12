@@ -45,41 +45,6 @@ func main() {
 	usagePercentLabel := widget.NewLabel("usagePercentLabel : ...")
 	//cpu.Times()
 
-	content := container.NewScroll(container.NewVBox(
-		//cpu.Info()
-		InfoLabel,
-		//coresthread,
-		//cpu.Percent()
-		usageLabel,
-		usagePercentLabel,
-
-		flagsLabel,
-
-		///cpunumber, //CPU - หมายเลข CPU
-		//vendorid,         //VendorID	ผู้ผลิต CPU
-		//cpufamily,        //Family	CPU family
-		//modelid,          //Model	model id
-		//steppingversion,  //Stepping	stepping version
-		//socketid,  //PhysicalID	socket id
-		//coreid,    //CoreID	core id
-		//coresmain, //Cores	จำนวน core
-		//modelName,        //ModelName	ชื่อ CPU เต็ม
-		//freq,             //Mhz	ความเร็ว MHz
-		//cacheSize,        //CacheSize	cache size
-		//featureflags, //Flags	feature flags
-		//microcodeVersion, //Microcode	microcode version
-
-		//cpu.Counts()
-		//coreCounts,
-		//threadCounts,
-
-		//cpu.Times()
-
-	))
-
-	w.SetContent(container.NewBorder(nil, nil, nil, nil, content))
-	w.Resize(fyne.NewSize(600, 600))
-
 	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
 
@@ -236,5 +201,39 @@ func main() {
 
 	}
 
+	content := container.NewScroll(container.NewVBox(
+		//cpu.Info()
+		InfoLabel,
+		//coresthread,
+		//cpu.Percent()
+		usageLabel,
+		usagePercentLabel,
+
+		flagsLabel,
+
+		///cpunumber, //CPU - หมายเลข CPU
+		//vendorid,         //VendorID	ผู้ผลิต CPU
+		//cpufamily,        //Family	CPU family
+		//modelid,          //Model	model id
+		//steppingversion,  //Stepping	stepping version
+		//socketid,  //PhysicalID	socket id
+		//coreid,    //CoreID	core id
+		//coresmain, //Cores	จำนวน core
+		//modelName,        //ModelName	ชื่อ CPU เต็ม
+		//freq,             //Mhz	ความเร็ว MHz
+		//cacheSize,        //CacheSize	cache size
+		//featureflags, //Flags	feature flags
+		//microcodeVersion, //Microcode	microcode version
+
+		//cpu.Counts()
+		//coreCounts,
+		//threadCounts,
+
+		//cpu.Times()
+
+	))
+
+	w.SetContent(container.NewBorder(nil, nil, nil, nil, content))
+	w.Resize(fyne.NewSize(600, 600))
 	w.ShowAndRun()
 }
