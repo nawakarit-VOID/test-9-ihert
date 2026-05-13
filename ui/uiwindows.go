@@ -2,10 +2,8 @@ package ui
 
 import (
 	"fmt"
-	"time"
 
-	cpuid "test9/cpu"
-	gopsutil "test9/cpu"
+	cpuinfo "test9/cpu"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -15,22 +13,17 @@ import (
 )
 
 func CreateWindow() {
-	//func main() {
 	// ... สร้าง UI
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
-	xy := cpuid.DisplayCPUid()
-	//dx := cpuui.cpuUI()
-
-	datagopsutil := gopsutil.DisplayCPUgopsutil()
+	datagopsutil := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 
 	x := widget.NewLabel("x...")
 	y := widget.NewLabel("y...")
 
 	dxd := widget.NewLabel("dxd ...")
 
-	x.SetText(fmt.Sprintf(xy))
 	//dxd.SetText(fmt.Sprintf(dx))
 	//cpuui()
 
@@ -51,128 +44,40 @@ func CreateWindow() {
 
 	datagopsutillabel.SetText(datagopsutil1)
 
-	//cpuui.cpuUI()
-	// usageLabel.SetText(fmt.Println)
-	//y.SetText(fmt.Sprintf(xz))
-
-	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
 
-	if len(info) > 0 { // cpu.Info()
-
-		//modelName.SetText("CPU: " + info[0].ModelName) //ModelName
-		modelName := info[0].ModelName
-
-		//freq.SetText(fmt.Sprintf("Frequency: %.2f MHz", info[0].Mhz)) //Mhz
-		freqSizeGhz := info[0].Mhz / 1000
-		//freq.SetText(fmt.Sprintf("Turbo Boost : %.2f GHz", freqSizeGhz)) //Ghz
-		/*
-			var cpucpuresult string
-			for i, cpucpu := range info {
-				cpucpuresult += fmt.Sprintf("info[%d]:  CPU=%d\n", i, cpucpu.CPU)
-			}
-			cpunumber.SetText(cpucpuresult) // CPU - หมายเลข CPU
-		*/
-		//vendorid.SetText(fmt.Sprintf("Vendor: %s", info[0].VendorID))          //VendorID
-		vendorid := info[0].VendorID
-		//cpufamily.SetText(fmt.Sprintf("Family: %s", info[0].Family)) //Family	CPU family
-		cpufamily := info[0].Family
-		//modelid.SetText(fmt.Sprintf("Model: %s", info[0].Model)) //Model	model id
-		modelid := info[0].Model
-		//steppingversion.SetText(fmt.Sprintf("Stepping: %d", info[0].Stepping)) //Stepping	stepping version
-		steppingversion := info[0].Stepping
-		// PhysicalID	socket id
-		/*
-			var socketidresult string
-			for i, cpu := range info {
-				socketidresult += fmt.Sprintf("Info [%d], PhysicalID:  %s\n", i, cpu.PhysicalID)
-			}
-			socketid.SetText(socketidresult)
-		*/
-		/*
-			//CoreID	core id
-			var coreidresult string
-			for i, cpu := range info {
-				coreidresult += fmt.Sprintf("Info [%d], CoreID %s\n", i, cpu.CoreID)
-			}
-			coreid.SetText(coreidresult)
-		*/
-		/*
-			var cpucoreresult string
-			for i, cpucpu := range info {
-				cpucoreresult += fmt.Sprintf("info: [%d] ,cpu core: %d\n", i, cpucpu.Cores)
-			}
-			coresmain.SetText(cpucoreresult) //Cores	จำนวน core
-		*/
-
-		cacheSizeMB := info[0].CacheSize / 1024
-		//cacheSize.SetText(fmt.Sprintf("cacheSize: %d MB", cacheSizeMB)) //CacheSize
-
-		flagsStr := ""
-		for i, flag := range info[0].Flags {
-			flagsStr += flag
-			if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
-				flagsStr += "\n"
-			} else {
-				flagsStr += " "
-			}
-		}
-
-		//featureflags.SetText(fmt.Sprintf("Flags:\n%s", flagsStr)) //Flags
-
-		//featureflags.SetText(fmt.Sprintf("Flags: %v", info[0].Flags)) //Flags
-
-		microcodeVersion := info[0].Microcode
-		//microcodeVersion.SetText(fmt.Sprintf("microcodeVersion: %s", info[0].Microcode)) //Microcode
+	if len(info) > 0 {
 
 		/*
-			cacheSize,        //CacheSize	cache size
-			featureflags,     //Flags	feature flags
-			microcodeVersion, //Microcode	microcode version
-		*/
+			fyne.Do(func() {
+				usageLabel.SetText(fmt.Sprintf("CPU Avg: %.2f%%", usage))
+			})
 
-		/*for {
-			coresmain.SetText(fmt.Sprintf("Coresmain: %d", info[0].Cores))
-		}*/
 
-		//cpu.Percent()
-		// 🔄 loop อัปเดต usage
-		go func() {
-			for {
+			//usagePercentLabel
+					go func() {
+				for {
 
-				percent, _ := cpu.Percent(1*time.Second, false)
-				if len(percent) > 0 {
-					usage := percent[0]
+					var cpuusagePercentresult string
+					// ดึง CPU usage ต่อ core
+					percent, _ := cpu.Percent(time.Second, true) // true = per core
+					//var builder strings.Builder
+					// ✅ reset ก่อนใช้
+					cpuusagePercentresult = ""
+					for i, usage := range percent {
+						//builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
+						cpuusagePercentresult += fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage)
+					}
 
-					fyne.Do(func() {
-						usageLabel.SetText(fmt.Sprintf("CPU Avg: %.2f%%", usage))
-					})
 				}
-			}
-		}()
-		//usagePercentLabel
+			}()
 
-		go func() {
-			for {
+			fyne.Do(func() {
 
-				var cpuusagePercentresult string
-				// ดึง CPU usage ต่อ core
-				percent, _ := cpu.Percent(time.Second, true) // true = per core
-				//var builder strings.Builder
-				// ✅ reset ก่อนใช้
-				cpuusagePercentresult = ""
-				for i, usage := range percent {
-					//builder.WriteString(fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage))
-					cpuusagePercentresult += fmt.Sprintf("Core [%d]: %.2f%%\n", i, usage)
-				}
-				fyne.Do(func() {
-
-					//usagePercentLabel.SetText(builder.String())
-					usagePercentLabel.SetText(cpuusagePercentresult)
-				})
-			}
-		}()
-
+				//usagePercentLabel.SetText(builder.String())
+				usagePercentLabel.SetText(cpuusagePercentresult)
+			})
+		*/
 		//cpu.Counts()
 		cores, _ := cpu.Counts(false) //Physical Cores /false = คอร์จริง
 		//coreCounts.SetText(fmt.Sprintf("Cores: %d", cores))
@@ -194,20 +99,20 @@ func CreateWindow() {
 		//coresthread.SetText(cpucoreresult)
 
 		//cpu.Times()
-
-		var infoLabel string
-		infoLabel += fmt.Sprintf("%s | [ %.2fGHz ]\n\n", modelName, freqSizeGhz)
-		infoLabel += fmt.Sprintf("Core: [ %d ]\n", cores)
-		infoLabel += fmt.Sprintf("Threade: [ %d ]\n", threads)
-		infoLabel += fmt.Sprintf("Vendor: [ %s ]\n", vendorid)
-		infoLabel += fmt.Sprintf("Family: [ %s ]\n", cpufamily)
-		infoLabel += fmt.Sprintf("Model: [ %s ]\n", modelid)
-		infoLabel += fmt.Sprintf("Stepping: [ %d ]\n", steppingversion)
-		infoLabel += fmt.Sprintf("CacheSize: [ %d ] MB\n", cacheSizeMB)
-		infoLabel += fmt.Sprintf("MicrocodeVersion: [ %s ]\n", microcodeVersion)
-		//infoLabel += fmt.Sprintf("")
-		overview.SetText(infoLabel)
-
+		/*
+			var infoLabel string
+			infoLabel += fmt.Sprintf("%s | [ %.2fGHz ]\n\n", modelName, freqSizeGhz)
+			infoLabel += fmt.Sprintf("Core: [ %d ]\n", cores)
+			infoLabel += fmt.Sprintf("Threade: [ %d ]\n", threads)
+			infoLabel += fmt.Sprintf("Vendor: [ %s ]\n", vendorid)
+			infoLabel += fmt.Sprintf("Family: [ %s ]\n", cpufamily)
+			infoLabel += fmt.Sprintf("Model: [ %s ]\n", modelid)
+			infoLabel += fmt.Sprintf("Stepping: [ %d ]\n", steppingversion)
+			infoLabel += fmt.Sprintf("CacheSize: [ %d ] MB\n", cacheSizeMB)
+			infoLabel += fmt.Sprintf("MicrocodeVersion: [ %s ]\n", microcodeVersion)
+			//infoLabel += fmt.Sprintf("")
+			overview.SetText(infoLabel)
+		*/
 		var detailLabel string
 		detailLabel += fmt.Sprintf("Hyperthreading: [ %v ]", threads > cores)
 		detailLabel += ("\n\n[  Thread  ] : [ Core ] : [ Socket ]\n")
@@ -215,7 +120,7 @@ func CreateWindow() {
 
 		detail.SetText(detailLabel)
 
-		flagsLabel.SetText(fmt.Sprintf("%s", flagsStr))
+		//flagsLabel.SetText(fmt.Sprintf("%s", flagsStr))
 
 	}
 	cpuuse := container.NewScroll(
