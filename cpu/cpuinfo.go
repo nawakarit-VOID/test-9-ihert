@@ -1,6 +1,7 @@
 package cpuinfo1
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/klauspost/cpuid/v2"
@@ -10,7 +11,6 @@ import (
 func CPUdata() map[string]interface{} {
 	// gopsutil
 	info, _ := cpu.Info()
-	//percent, _ := cpu.Percent(time.Second, false)
 	physical, _ := cpu.Counts(false)
 	logical, _ := cpu.Counts(true)
 
@@ -23,30 +23,41 @@ func CPUdata() map[string]interface{} {
 			flagsStr += " "
 		}
 	}
+	var Hyperthreading string
+	Hyperthreading += fmt.Sprintf("Hyperthreading: [ %v ]", logical > physical)
+
+	var cpuThreadCoreSocketresult string
+	for i, cpu := range info {
+		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
+			i, cpu.CoreID, cpu.PhysicalID)
+	}
 
 	// cpuid
 	cpuInfo := cpuid.CPU
 
 	return map[string]interface{}{
 		// gopsutil
-		"modelName":        info[0].ModelName, //ชื่อ cpu
-		"vendor":           info[0].VendorID,
-		"physical_cores":   physical,
-		"logical_cores":    logical,
-		"frequency":        info[0].Mhz / 1000,
-		"family":           info[0].Family,
-		"modelid":          info[0].Model,
-		"steppingversion":  info[0].Stepping,
-		"cacheSizeMB":      info[0].CacheSize / 1024,
-		"flagsStr":         flagsStr,
-		"microcodeVersion": info[0].Microcode,
+		"modelName":                 info[0].ModelName, //ชื่อ cpu
+		"vendor":                    info[0].VendorID,
+		"physical_cores":            physical,
+		"logical_cores":             logical,
+		"frequency":                 info[0].Mhz / 1000,
+		"family":                    info[0].Family,
+		"modelid":                   info[0].Model,
+		"steppingversion":           info[0].Stepping,
+		"cacheSizeMB":               info[0].CacheSize / 1024,
+		"flagsStr":                  flagsStr,
+		"microcodeVersion":          info[0].Microcode,
+		"cpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
+		"Hyperthreading":            Hyperthreading,
 
 		//cpuid
 		//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
-		"l1_cache": cpuInfo.Cache.L1D / 1000,
-		"l2_cache": cpuInfo.Cache.L2 / 1000,
-		"l3_cache": cpuInfo.Cache.L3 / 1000,
-		"has_avx2": cpuInfo.Has(cpuid.AVX2),
+		"l1d_cache": cpuInfo.Cache.L1D / 1000,
+		"l1i_cache": cpuInfo.Cache.L1I / 1000,
+		"l2_cache":  cpuInfo.Cache.L2 / 1000,
+		"l3_cache":  cpuInfo.Cache.L3 / 1000,
+		//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 	}
 }
 
