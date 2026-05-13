@@ -1,11 +1,8 @@
-package cpuinfo
+package cpuinfo1
 
 import (
-	"fmt"
 	"time"
 
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/widget"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
 )
@@ -17,8 +14,6 @@ func CPUdata() map[string]interface{} {
 	physical, _ := cpu.Counts(false)
 	logical, _ := cpu.Counts(true)
 
-	usageLabel := widget.NewLabel("usaelabel...")
-
 	flagsStr := ""
 	for i, flag := range info[0].Flags {
 		flagsStr += flag
@@ -29,32 +24,15 @@ func CPUdata() map[string]interface{} {
 		}
 	}
 
-	//cpu.Percent()
-	// loop อัปเดต usage
-	//
-	go func() {
-		for {
-			percent, _ := cpu.Percent(1*time.Second, false)
-			if len(percent) > 0 {
-				usage := percent[0]
-
-				fyne.Do(func() {
-					usageLabel.SetText(fmt.Sprintf("CPU Avg: %.2f%%", usage))
-				})
-			}
-		}
-	}()
-
 	// cpuid
 	cpuInfo := cpuid.CPU
 
 	return map[string]interface{}{
 		// gopsutil
-		"modelName":      info[0].ModelName, //ชื่อ cpu
-		"vendor":         info[0].VendorID,
-		"physical_cores": physical,
-		"logical_cores":  logical,
-		//"usage":            percent[0],
+		"modelName":        info[0].ModelName, //ชื่อ cpu
+		"vendor":           info[0].VendorID,
+		"physical_cores":   physical,
+		"logical_cores":    logical,
 		"frequency":        info[0].Mhz / 1000,
 		"family":           info[0].Family,
 		"modelid":          info[0].Model,
@@ -62,15 +40,54 @@ func CPUdata() map[string]interface{} {
 		"cacheSizeMB":      info[0].CacheSize / 1024,
 		"flagsStr":         flagsStr,
 		"microcodeVersion": info[0].Microcode,
-		//"usage":            usage,
-		//"percent":          cpu.Percent(1*time.Second, false),
-		"usageLabel": usageLabel,
 
 		//cpuid
 		//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
-		"l1_cache": cpuInfo.Cache.L1D,
-		"l2_cache": cpuInfo.Cache.L2,
-		"l3_cache": cpuInfo.Cache.L3,
+		"l1_cache": cpuInfo.Cache.L1D / 1000,
+		"l2_cache": cpuInfo.Cache.L2 / 1000,
+		"l3_cache": cpuInfo.Cache.L3 / 1000,
 		"has_avx2": cpuInfo.Has(cpuid.AVX2),
 	}
+}
+
+// ============================================================================
+// monitor
+// ============================================================================
+type CPUData struct {
+	UsageTotal   float64   // CPU usage รวม
+	UsagePerCore []float64 // CPU usage ต่อ core
+}
+
+type CPUMonitor struct {
+	ticker   *time.Ticker
+	callback func(CPUData)
+}
+
+// สร้าง instance ใหม่
+func NewCPUMonitor(interval time.Duration, callback func(CPUData)) *CPUMonitor {
+	return &CPUMonitor{
+		ticker:   time.NewTicker(interval),
+		callback: callback,
+	}
+}
+
+// เริ่ม monitoring
+func (m *CPUMonitor) Start() {
+	go func() {
+		for range m.ticker.C {
+			// ดึง CPU usage รวม
+			percentTotal, _ := cpu.Percent(100*time.Millisecond, false)
+
+			// ดึง CPU usage ต่อ core
+			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
+
+			if len(percentTotal) > 0 {
+				data := CPUData{
+					UsageTotal:   percentTotal[0],
+					UsagePerCore: percentPerCore,
+				}
+				m.callback(data)
+			}
+		}
+	}()
 }
