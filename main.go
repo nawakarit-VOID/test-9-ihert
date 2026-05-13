@@ -18,8 +18,20 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
+	xy := cpuid.DisplayCPUid()
+	//dx := cpuui.cpuUI()
+
+	datagopsutil := gopsutil.DisplayCPUgopsutil()
+
 	x := widget.NewLabel("x...")
 	y := widget.NewLabel("y...")
+
+	dxd := widget.NewLabel("dxd ...")
+
+	x.SetText(fmt.Sprintf(xy))
+	//dxd.SetText(fmt.Sprintf(dx))
+	//cpuui()
+
 	datagopsutillabel := widget.NewLabel("datagopsutillabel...")
 
 	// Labels
@@ -31,16 +43,14 @@ func main() {
 	usagePercentLabel := widget.NewLabel("Usage.PercentLabel...")
 	//cpu.Times()
 
-	xy := cpuid.DisplayCPUid()
-	datagopsutil := gopsutil.DisplayCPUgopsutil()
-
 	var datagopsutil1 string
-	datagopsutil1 += fmt.Sprintf("Brand: %s", datagopsutil["brand"])
+	datagopsutil1 += fmt.Sprintf("Brand: %s\n", datagopsutil["brand"])
 	datagopsutil1 += fmt.Sprintf("L3: %d KB", datagopsutil["l3_cache"])
 
 	datagopsutillabel.SetText(datagopsutil1)
+
+	//cpuui.cpuUI()
 	// usageLabel.SetText(fmt.Println)
-	x.SetText(fmt.Sprintf(xy))
 	//y.SetText(fmt.Sprintf(xz))
 
 	// โหลดข้อมูล CPU static
@@ -231,6 +241,9 @@ func main() {
 		//usageLabel,
 		container.NewTabItem("x", container.NewScroll(x)),
 		container.NewTabItem("y--", container.NewScroll(y)),
+
+		container.NewTabItem("y--", container.NewScroll(dxd)),
+
 		container.NewTabItem("datagopsutillabel", container.NewScroll(datagopsutillabel)),
 
 		//container.NewTabItem("CPU", container.NewScroll(nil)),

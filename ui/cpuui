@@ -1,0 +1,9 @@
+package ui
+
+import "fyne.io/fyne/v2/app"
+
+func CreateWindow() {
+	a := app.New()
+	w := myApp.NewWindow()
+	// ... สร้าง UI
+}
