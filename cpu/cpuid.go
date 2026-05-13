@@ -1,4 +1,4 @@
-package main
+package cpuinfo
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
-func DisplayCPUInfo() string {
+func DisplayCPUid() string {
 	// gopsutil
 	info, _ := cpu.Info()
 	percent, _ := cpu.Percent(time.Second, false)
@@ -35,11 +35,6 @@ func DisplayCPUInfo() string {
 	result += fmt.Sprintf("\n===== Performance =====\n")
 	result += fmt.Sprintf("CPU Usage: %.2f%%\n", percent[0])
 	result += fmt.Sprintf("Frequency: %.2f MHz\n", info[0].Mhz)
-
-	result += fmt.Sprintf("\n===== Features =====\n")
-	result += fmt.Sprintf("Has SSE4.2: %v\n", cpuInfo.Has(cpuid.SSE42))
-	result += fmt.Sprintf("Has AVX: %v\n", cpuInfo.Has(cpuid.AVX))
-	result += fmt.Sprintf("Has AVX2: %v\n", cpuInfo.Has(cpuid.AVX2))
 
 	return result
 }

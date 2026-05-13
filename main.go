@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	cpuid "test9/cpu"
+	gopsutil "test9/cpu"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
@@ -17,39 +19,29 @@ func main() {
 	w := a.NewWindow("CPU Info")
 
 	x := widget.NewLabel("x...")
+	y := widget.NewLabel("y...")
+	datagopsutillabel := widget.NewLabel("datagopsutillabel...")
+
 	// Labels
 	overview := widget.NewLabel("overview...")
 	detail := widget.NewLabel("detail...")
 	flagsLabel := widget.NewLabel("flags.feature...")
-	//detailLabel := widget.NewLabel("...")
-	//coresthread := widget.NewLabel("...")
-	// cpu.Info()
-	//cpunumber := widget.NewLabel("CPUnumber: ...") //CPU - หมายเลข CPU
-	//vendorid := widget.NewLabel("Vendorid: ...")                 //VendorID - ผู้ผลิต CPU
-	//cpufamily := widget.NewLabel("CPUfamily: ...")               //Family - CPU family
-	//modelid := widget.NewLabel("Modelid: ...")                   //Model - model id
-	//steppingversion := widget.NewLabel("Stepping version: ...")  //Stepping - stepping version
-	//socketid := widget.NewLabel("Socketid: ...")   //PhysicalID - socket id
-	//coreid := widget.NewLabel("Coreid: ...")       //CoreID - core id
-	///coresmain := widget.NewLabel("Coresmain: ...") //Cores - จำนวน core
-	//modelName := widget.NewLabel("CPU: loading...")              //ModelName - ชื่อ CPU เต็ม
-	//freq := widget.NewLabel("Frequency: ...")                    //Mhz - ความเร็ว MHz
-	//cacheSize := widget.NewLabel("CacheSize: ...")               //CacheSize - cache size
-	//featureflags := widget.NewLabel("FeatureFlags: ...") //Flags - feature flags
-	//microcodeVersion := widget.NewLabel("MicrocodeVersion: ...") //Microcode - microcode version
 
-	// cpu.Counts()
-	//coreCounts := widget.NewLabel("Cores: ...")     //2*cpu.Counts()*core
-	//threadCounts := widget.NewLabel("Threads: ...") //2*cpu.Counts()*thread
-	//cpu.Percent()
 	usageLabel := widget.NewLabel("Usage...") //3*cpu.Percent()
 	usagePercentLabel := widget.NewLabel("Usage.PercentLabel...")
 	//cpu.Times()
 
-	xy := DisplayCPUInfo()
+	xy := cpuid.DisplayCPUid()
+	datagopsutil := gopsutil.DisplayCPUgopsutil()
 
+	var datagopsutil1 string
+	datagopsutil1 += fmt.Sprintf("Brand: %s", datagopsutil["brand"])
+	datagopsutil1 += fmt.Sprintf("L3: %d KB", datagopsutil["l3_cache"])
+
+	datagopsutillabel.SetText(datagopsutil1)
 	// usageLabel.SetText(fmt.Println)
 	x.SetText(fmt.Sprintf(xy))
+	//y.SetText(fmt.Sprintf(xz))
 
 	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
@@ -238,6 +230,9 @@ func main() {
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		//usageLabel,
 		container.NewTabItem("x", container.NewScroll(x)),
+		container.NewTabItem("y--", container.NewScroll(y)),
+		container.NewTabItem("datagopsutillabel", container.NewScroll(datagopsutillabel)),
+
 		//container.NewTabItem("CPU", container.NewScroll(nil)),
 		//usagePercentLabel,
 
