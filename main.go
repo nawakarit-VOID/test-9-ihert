@@ -16,8 +16,7 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
-	fmt.Println(DisplayCPUInfo())
-
+	x := widget.NewLabel("x...")
 	// Labels
 	overview := widget.NewLabel("overview...")
 	detail := widget.NewLabel("detail...")
@@ -46,6 +45,11 @@ func main() {
 	usageLabel := widget.NewLabel("Usage...") //3*cpu.Percent()
 	usagePercentLabel := widget.NewLabel("Usage.PercentLabel...")
 	//cpu.Times()
+
+	xy := DisplayCPUInfo()
+
+	// usageLabel.SetText(fmt.Println)
+	x.SetText(fmt.Sprintf(xy))
 
 	// โหลดข้อมูล CPU static
 	info, _ := cpu.Info()
@@ -233,6 +237,7 @@ func main() {
 
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		//usageLabel,
+		container.NewTabItem("x", container.NewScroll(x)),
 		//container.NewTabItem("CPU", container.NewScroll(nil)),
 		//usagePercentLabel,
 
