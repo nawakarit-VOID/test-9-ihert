@@ -35,6 +35,56 @@ func CPUdata() map[string]interface{} {
 	// cpuid
 	cpuInfo := cpuid.CPU
 
+	p := cpuInfo.Cache.L3
+	fmt.Printf("\np = %d\n", p)
+	processValue("p", &p)
+
+	//y:= 9
+	//u:= 101
+	//i:= 40
+	//o:= 85
+	//p:= 23
+
+	// ประกาศตัวแปรแยกเก็บตัวอักษร V และ G
+	/*
+		var B string = ""
+		var KB string = ""
+		var MB string = ""
+		var GB string = ""
+		var TB string = ""*/
+	/*
+	   // ฟังก์ชันประมวลผลสัญญาณตามเงื่อนไข
+	   	// ประมวลผล p
+	   	fmt.Printf("\np = %d\n", p)
+
+	   	if p > 1000000 {
+	   		fmt.Println("  → น้อยกว่า 100 ✓ คูณด้วย 2")
+	   		p = p / 1000000
+	   		pV = "V"
+	   		fmt.Printf("  → ผลลัพธ์: %d, V: %s\n", p, pV)
+	   		if p < 70 {
+	   			fmt.Println("  → น้อยกว่า 70 ✓ บวก 3")
+	   			p = p + 3
+	   			pG = "G"
+	   			fmt.Printf("  → ผลลัพธ์สุดท้าย: %d, V: %s, G: %s\n", p, pV, pG)
+	   		} else {
+	   			fmt.Println("  → มากกว่าหรือเท่ากับ 70 → ไม่บวก")
+	   		}
+	   	} else {
+	   		fmt.Println("  → มากกว่าหรือเท่ากับ 100 → ไม่ทำอะไร")
+	   		fmt.Printf("  → ผลลัพธ์: %d, V: (ไม่มี), G: (ไม่มี)\n", p)
+	   	}
+
+	   	fmt.Println("\n════════════════════════════════════")
+	   	fmt.Println("     ผลลัพธ์สุดท้าย")
+	   	fmt.Println("════════════════════════════════════")
+	   	fmt.Printf("p = %d | V: %s | G: %s\n", t, tV, tG)
+	   }
+	*/
+	///////////////////////////////////////////////////////////////////////
+
+	//if p > 1048576 {
+
 	return map[string]interface{}{
 		// gopsutil
 		"modelName":                 info[0].ModelName, //ชื่อ cpu
@@ -57,6 +107,8 @@ func CPUdata() map[string]interface{} {
 		"l1i_cache": cpuInfo.Cache.L1I / 1000,
 		"l2_cache":  cpuInfo.Cache.L2 / 1000,
 		"l3_cache":  cpuInfo.Cache.L3 / 1000,
+		"l3_cache1": cpuInfo.Cache.L3 / 1000,
+		//"l3_test":   x,
 		//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 	}
 }
@@ -101,4 +153,40 @@ func (m *CPUMonitor) Start() {
 			}
 		}
 	}()
+}
+
+// ฟังก์ชันประมวลผลค่าด้วย switch case
+func processValue(name string, value *int) {
+	// ตัวอักษร flag ที่สัมผัส
+	var v string = ""
+	// ตรวจสอบเงื่อนไข
+	switch {
+	case *value < 1000:
+		*value = *value //
+		v = "B"
+		fmt.Printf("%d %s\n", *value, v)
+
+	case *value >= 1024:
+		*value = *value / 1024 //
+		v = "KB"
+		fmt.Printf("%d %s\n", *value, v)
+
+	case *value >= 1048576:
+		*value = *value / 1048576 //
+		v = "MB"
+		fmt.Printf("%d %s\n", *value, v)
+
+	case *value < 100:
+		fmt.Println("  Case 2: น้อยกว่า 100 แต่ >= 70 ✓")
+		*value = *value * 2 // คูณ 2
+		v = "V"
+		fmt.Printf("  → คูณ 2: ได้ %d\n", *value)
+		fmt.Printf("  → Flag V: %s, Flag G: (ไม่มี)\n", v)
+
+	// Case 3: มากกว่าหรือเท่ากับ 100
+	default:
+		fmt.Println("  Case 3: มากกว่าหรือเท่ากับ 100 → ไม่ทำอะไร")
+		fmt.Printf("  → ค่าเดิม: %d (ไม่เปลี่ยน)\n", *value)
+		fmt.Printf("  → Flag V: (ไม่มี), Flag G: (ไม่มี)\n")
+	}
 }
