@@ -35,9 +35,32 @@ func CPUdata() map[string]interface{} {
 	// cpuid
 	cpuInfo := cpuid.CPU
 
-	p := cpuInfo.Cache.L3
-	fmt.Printf("\np = %d\n", p)
-	processValue("p", &p)
+	c1d := cpuInfo.Cache.L1D
+	//c1i := cpuInfo.Cache.L1I
+	//c2 := cpuInfo.Cache.L2
+	//c3 := cpuInfo.Cache.L3
+
+	//fmt.Printf("\nc1d = %d\n", c1d)
+	c1d, v := processValue(c1d)
+	fmt.Printf("c1d = %d %s \n", c1d, v)
+
+	//processValue("c1d", &c1d)
+
+	//fmt.Printf("\nc1i = %d\n", c1i)
+	//processValue("c1i", &c1i)
+
+	//fmt.Printf("\nc2 = %d\n", c2)
+	//processValue("c2", &c2)
+
+	//fmt.Printf("\nc3 = %d\n", c3)
+	//processValue("c3", &c3)
+
+	//fmt.Printf("c1d = %d\n", c1d)
+	//fmt.Printf("c1d = %d\n", c1i)
+	//fmt.Printf("c1d = %d\n", c2)
+	//fmt.Printf("c1d = %d\n", c3)
+
+	//fmt.Printf("%d %s\n", *value, v)
 
 	//y:= 9
 	//u:= 101
@@ -103,11 +126,11 @@ func CPUdata() map[string]interface{} {
 
 		//cpuid
 		//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
-		"l1d_cache": cpuInfo.Cache.L1D / 1000,
-		"l1i_cache": cpuInfo.Cache.L1I / 1000,
-		"l2_cache":  cpuInfo.Cache.L2 / 1000,
-		"l3_cache":  cpuInfo.Cache.L3 / 1000,
-		"l3_cache1": cpuInfo.Cache.L3 / 1000,
+		"l1d_cache": cpuInfo.Cache.L1D,
+		"l1i_cache": cpuInfo.Cache.L1I,
+		"l2_cache":  cpuInfo.Cache.L2,
+		"l3_cache":  cpuInfo.Cache.L3,
+		"l3_cache1": cpuInfo.Cache.L3,
 		//"l3_test":   x,
 		//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 	}
@@ -156,37 +179,35 @@ func (m *CPUMonitor) Start() {
 }
 
 // ฟังก์ชันประมวลผลค่าด้วย switch case
-func processValue(name string, value *int) {
+func processValue(value int) (int, string) {
 	// ตัวอักษร flag ที่สัมผัส
 	var v string = ""
 	// ตรวจสอบเงื่อนไข
 	switch {
-	case *value < 1000:
-		*value = *value //
-		v = "B"
-		fmt.Printf("%d %s\n", *value, v)
+	case value >= 1099511627776:
+		value = value / 1099511627776
+		v = "TB"
+		//fmt.Printf("%d %s\n", value, v)
 
-	case *value >= 1024:
-		*value = *value / 1024 //
-		v = "KB"
-		fmt.Printf("%d %s\n", *value, v)
+	case value >= 1073741824:
+		value = value / 1073741824
+		v = "GB"
+		//fmt.Printf("%d %s\n", value, v)
 
-	case *value >= 1048576:
-		*value = *value / 1048576 //
+	case value >= 1048576:
+		value = value / 1048576
 		v = "MB"
-		fmt.Printf("%d %s\n", *value, v)
+		//fmt.Printf("%d %s\n", value, v)
 
-	case *value < 100:
-		fmt.Println("  Case 2: น้อยกว่า 100 แต่ >= 70 ✓")
-		*value = *value * 2 // คูณ 2
-		v = "V"
-		fmt.Printf("  → คูณ 2: ได้ %d\n", *value)
-		fmt.Printf("  → Flag V: %s, Flag G: (ไม่มี)\n", v)
+	case value >= 1000:
+		value = value / 1024
+		v = "KB"
+		//fmt.Printf("%d %s\n", value, v)
 
-	// Case 3: มากกว่าหรือเท่ากับ 100
 	default:
-		fmt.Println("  Case 3: มากกว่าหรือเท่ากับ 100 → ไม่ทำอะไร")
-		fmt.Printf("  → ค่าเดิม: %d (ไม่เปลี่ยน)\n", *value)
-		fmt.Printf("  → Flag V: (ไม่มี), Flag G: (ไม่มี)\n")
+		v = "B"
+		//fmt.Printf("%d %s\n", value, v)
+
 	}
+	return value, v
 }
