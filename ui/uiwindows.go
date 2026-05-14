@@ -60,16 +60,16 @@ func CreateWindow() {
 	//cpu.Times()
 
 	var cpuinfo string
-	cpuinfo += fmt.Sprintf("CPU| : %s\n", dataCPUInfo["modelName"])
-	cpuinfo += fmt.Sprintf("Vendor| : %s\n", dataCPUInfo["vendor"])
-	cpuinfo += fmt.Sprintf("Cores| : [ %d ]\n", dataCPUInfo["physical_cores"])
-	cpuinfo += fmt.Sprintf("Thread| : [ %d ]\n", dataCPUInfo["logical_cores"])
-	cpuinfo += fmt.Sprintf("FrequencyMax| : [ %.2f GHz ]\n", dataCPUInfo["frequency"])
-	cpuinfo += fmt.Sprintf("Family| : [ %s ]\n", dataCPUInfo["family"])
-	cpuinfo += fmt.Sprintf("Modelid| : [ %s ]\n", dataCPUInfo["modelid"])
-	cpuinfo += fmt.Sprintf("SteppingVersion| : [ %d ]\n", dataCPUInfo["steppingversion"])
-	cpuinfo += fmt.Sprintf("CacheSize| : [ %d MB ]\n", dataCPUInfo["cacheSizeMB"])
-	cpuinfo += fmt.Sprintf("MicrocodeVersion| : [ %s ]\n", dataCPUInfo["microcodeVersion"])
+	cpuinfo += fmt.Sprintf("CPU : %s\n", dataCPUInfo["modelName"])
+	cpuinfo += fmt.Sprintf("Vendor : %s\n", dataCPUInfo["vendor"])
+	cpuinfo += fmt.Sprintf("Cores : %d\n", dataCPUInfo["physical_cores"])
+	cpuinfo += fmt.Sprintf("Thread : %d\n", dataCPUInfo["logical_cores"])
+	cpuinfo += fmt.Sprintf("FreqMax : %.2f GHz\n", dataCPUInfo["frequency"])
+	cpuinfo += fmt.Sprintf("Family : %s\n", dataCPUInfo["family"])
+	cpuinfo += fmt.Sprintf("Modelid : %s\n", dataCPUInfo["modelid"])
+	cpuinfo += fmt.Sprintf("Stepping : %d\n", dataCPUInfo["steppingversion"])
+	cpuinfo += fmt.Sprintf("Cache : %d MB\n", dataCPUInfo["cacheSizeMB"])
+	cpuinfo += fmt.Sprintf("Microcode : %s\n", dataCPUInfo["microcodeVersion"])
 
 	cpuinfolabel.SetText(cpuinfo)
 
@@ -82,11 +82,11 @@ func CreateWindow() {
 	detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["Hyperthreading"])
 	detailLabel += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
 	detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["cpuThreadCoreSocketresult"])
-
-	detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
-	detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
-	detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
-	detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])          //cpuid
+	//detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
+	//detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
+	//detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
+	//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])          //cpuid
+	detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"])
 
 	detail.SetText(detailLabel)
 
@@ -100,6 +100,7 @@ func CreateWindow() {
 	cpu := container.NewAppTabs(
 
 		container.NewTabItem("Overview", container.NewScroll(cpuinfolabel)),
+
 		container.NewTabItem("Detail", container.NewScroll(detail)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
