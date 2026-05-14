@@ -13,23 +13,16 @@ import (
 )
 
 func CreateWindow() {
-	// ... สร้าง UI
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 
-	//dxd.SetText(fmt.Sprintf(dx))
-	//cpuui()
-
-	// Labels
-	//overview := widget.NewLabel("overview...")
 	detail := widget.NewLabel("detail...")
 
 	//update cpu usage
-
-	usageTotalLabel := widget.NewLabel("Total Usage: 0%")
-	usagePerCoreLabel := widget.NewLabel("Per Core: -")
+	usageTotalLabel := widget.NewLabel("CPU Avg...")
+	usagePerCoreLabel := widget.NewLabel("CPU...")
 
 	// สร้าง monitor
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.CPUData) {
@@ -47,17 +40,10 @@ func CreateWindow() {
 			usagePerCoreLabel.SetText(perCoreStr)
 		})
 	})
+	monitor.Start() // เริ่ม monitoring
 
-	// เริ่ม monitoring
-	monitor.Start()
-
-	//
-
-	cpuinfolabel := widget.NewLabel("cpuinfolabel...") //Overview
-
+	cpuinfolabel := widget.NewLabel("cpuinfolabel...")   //Overview
 	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
-
-	//cpu.Times()
 
 	var cpuinfo string
 	cpuinfo += fmt.Sprintf("CPU : %s\n", dataCPUInfo["modelName"])
@@ -70,12 +56,10 @@ func CreateWindow() {
 	cpuinfo += fmt.Sprintf("Stepping : %d\n", dataCPUInfo["steppingversion"])
 	cpuinfo += fmt.Sprintf("Cache : %d MB\n", dataCPUInfo["cacheSizeMB"])
 	cpuinfo += fmt.Sprintf("Microcode : %s\n", dataCPUInfo["microcodeVersion"])
-
 	cpuinfolabel.SetText(cpuinfo)
 
 	var flagsStr string
 	flagsStr += fmt.Sprintf("%v\n", dataCPUInfo["flagsStr"])
-
 	flagsStrlabel.SetText(flagsStr)
 
 	var detailLabel string
@@ -85,9 +69,8 @@ func CreateWindow() {
 	//detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
 	//detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
 	//detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
-	//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])          //cpuid
-	detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"])
-
+	//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])
+	detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"]) //cpuid
 	detail.SetText(detailLabel)
 
 	cpuuse := container.NewScroll(

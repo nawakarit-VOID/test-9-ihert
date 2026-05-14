@@ -13,6 +13,7 @@ func CPUdata() map[string]interface{} {
 	info, _ := cpu.Info()
 	physical, _ := cpu.Counts(false)
 	logical, _ := cpu.Counts(true)
+	times, _ := cpu.Times(true)
 
 	flagsStr := ""
 	for i, flag := range info[0].Flags {
@@ -30,6 +31,24 @@ func CPUdata() map[string]interface{} {
 	for i, cpu := range info {
 		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
 			i, cpu.CoreID, cpu.PhysicalID)
+	}
+	//cpu.Times()
+	for _, t := range times {
+
+		fmt.Println("CPU:", t.CPU)
+
+		fmt.Println("User:", t.User)
+		fmt.Println("System:", t.System)
+		fmt.Println("Idle:", t.Idle)
+		fmt.Println("Nice:", t.Nice)
+		fmt.Println("Iowait:", t.Iowait)
+		fmt.Println("Irq:", t.Irq)
+		fmt.Println("Softirq:", t.Softirq)
+		fmt.Println("Steal:", t.Steal)
+		fmt.Println("Guest:", t.Guest)
+		fmt.Println("GuestNice:", t.GuestNice)
+
+		fmt.Println()
 	}
 
 	// cpuid
