@@ -135,25 +135,25 @@ func (m *CPUMonitor) Start() {
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
 			//cpu.Times()
 			times, _ := cpu.Times(true)
+			/*
+				for _, t := range times {
 
-			for _, t := range times {
+					fmt.Println("CPU:", t.CPU)
 
-				fmt.Println("CPU:", t.CPU)
+					fmt.Println("User:", t.User)
+					fmt.Println("System:", t.System)
+					fmt.Println("Idle:", t.Idle)
+					fmt.Println("Nice:", t.Nice)
+					fmt.Println("Iowait:", t.Iowait)
+					fmt.Println("Irq:", t.Irq)
+					fmt.Println("Softirq:", t.Softirq)
+					fmt.Println("Steal:", t.Steal)
+					fmt.Println("Guest:", t.Guest)
+					fmt.Println("GuestNice:", t.GuestNice)
 
-				fmt.Println("User:", t.User)
-				fmt.Println("System:", t.System)
-				fmt.Println("Idle:", t.Idle)
-				fmt.Println("Nice:", t.Nice)
-				fmt.Println("Iowait:", t.Iowait)
-				fmt.Println("Irq:", t.Irq)
-				fmt.Println("Softirq:", t.Softirq)
-				fmt.Println("Steal:", t.Steal)
-				fmt.Println("Guest:", t.Guest)
-				fmt.Println("GuestNice:", t.GuestNice)
-
-				fmt.Println()
-			}
-
+					fmt.Println()
+				}
+			*/
 			if len(percentTotal) > 0 {
 				data := CPUDatast{
 					UsageTotal:   percentTotal[0],

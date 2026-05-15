@@ -20,6 +20,8 @@ func CreateWindow() {
 
 	detail := widget.NewLabel("detail...")
 	timesLabel := widget.NewLabel("timesLabel...")
+	meanLabel := widget.NewLabel("meanLabel...")
+	//mean1Label := widget.NewLabel("mean1Label...")
 
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
@@ -33,36 +35,39 @@ func CreateWindow() {
 		})
 
 		// แสดง usage ต่อ core
-		perCoreStr := " "
+		var perCoreStr string = ""
 		for i, usage := range data.UsagePerCore {
-			perCoreStr += fmt.Sprintf("Core [ %d ] : %.1f%%\n ", i, usage)
+			perCoreStr += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, usage)
 		}
 		fyne.Do(func() {
 			usagePerCoreLabel.SetText(perCoreStr)
 		})
 
-		times := " "
-		for t, usage := range data.Times {
+		var timesStr string = ""
+		for c, v := range data.Times {
 			//for _, t := range data.Times {
+			timesStr += fmt.Sprintf(
+				"CPU: [ %d ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
+				c, v.User, v.System, v.Idle, v.Nice, v.Iowait, v.Irq, v.Softirq, v.Steal, v.Guest, v.GuestNice)
 
-			times += fmt.Sprintf("CPU: %d %TimesStat\n", t, usage)
-
-			fyne.Do(func() {
-				timesLabel.SetText(times)
+			fyne.Do(func() { //แยกออกมา กัน fyne พัง
+				timesLabel.SetText(timesStr)
 			})
-			/*
-				fmt.Println("User:", t.User)
-				fmt.Println("System:", t.System)
-				fmt.Println("Idle:", t.Idle)
-				fmt.Println("Nice:", t.Nice)
-				fmt.Println("Iowait:", t.Iowait)
-				fmt.Println("Irq:", t.Irq)
-				fmt.Println("Softirq:", t.Softirq)
-				fmt.Println("Steal:", t.Steal)
-				fmt.Println("Guest:", t.Guest)
-				fmt.Println("GuestNice:", t.GuestNice)
+			fyne.Do(func() {
+				meanLabel.SetText(fmt.Sprintln(`User : โปรแกรมของผู้ใช้
+System : ระบบ
+User : โปรแกรมของผู้ใช้
+System : ระบบ
+Idle : ไม่ได้ทำอะไร
+Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
+Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
+Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
+Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
+Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
+Guest : เวลาที่ CPU ใช้งาน guest virtual machine\n
+GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`))
+			})
 
-				fmt.Println()*/
 		}
 
 	})
@@ -104,10 +109,12 @@ func CreateWindow() {
 			//widget.NewCard("CPU Information", "", container.NewVBox(
 			usageTotalLabel,
 			usagePerCoreLabel,
+			timesLabel,
+			meanLabel,
 		))
 
 	cpu := container.NewAppTabs(
-		container.NewTabItem("TEST", container.NewScroll(timesLabel)),
+		//container.NewTabItem("TEST", container.NewScroll(timesLabel)),
 
 		container.NewTabItem("Overview", container.NewScroll(cpuinfolabel)),
 
@@ -129,6 +136,6 @@ func CreateWindow() {
 
 	//w.SetContent(container.NewBorder(nil, nil, nil, nil, cpu))
 	w.SetContent(tabs)
-	w.Resize(fyne.NewSize(600, 600))
+	w.Resize(fyne.NewSize(1200, 600))
 	w.ShowAndRun()
 }
