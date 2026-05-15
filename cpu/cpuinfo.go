@@ -13,7 +13,7 @@ func CPUdata() map[string]interface{} {
 	info, _ := cpu.Info()
 	physical, _ := cpu.Counts(false)
 	logical, _ := cpu.Counts(true)
-	times, _ := cpu.Times(true)
+	//times, _ := cpu.Times(true)
 
 	flagsStr := ""
 	for i, flag := range info[0].Flags {
@@ -32,25 +32,25 @@ func CPUdata() map[string]interface{} {
 		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
 			i, cpu.CoreID, cpu.PhysicalID)
 	}
-	//cpu.Times()
-	for _, t := range times {
+	/*
+		for _, t := range times {
 
-		fmt.Println("CPU:", t.CPU)
+			fmt.Println("CPU:", t.CPU)
 
-		fmt.Println("User:", t.User)
-		fmt.Println("System:", t.System)
-		fmt.Println("Idle:", t.Idle)
-		fmt.Println("Nice:", t.Nice)
-		fmt.Println("Iowait:", t.Iowait)
-		fmt.Println("Irq:", t.Irq)
-		fmt.Println("Softirq:", t.Softirq)
-		fmt.Println("Steal:", t.Steal)
-		fmt.Println("Guest:", t.Guest)
-		fmt.Println("GuestNice:", t.GuestNice)
+			fmt.Println("User:", t.User)
+			fmt.Println("System:", t.System)
+			fmt.Println("Idle:", t.Idle)
+			fmt.Println("Nice:", t.Nice)
+			fmt.Println("Iowait:", t.Iowait)
+			fmt.Println("Irq:", t.Irq)
+			fmt.Println("Softirq:", t.Softirq)
+			fmt.Println("Steal:", t.Steal)
+			fmt.Println("Guest:", t.Guest)
+			fmt.Println("GuestNice:", t.GuestNice)
 
-		fmt.Println()
-	}
-
+			fmt.Println()
+		}
+	*/
 	// cpuid
 	cpuInfo := cpuid.CPU
 
@@ -106,18 +106,19 @@ func CPUdata() map[string]interface{} {
 // ============================================================================
 // monitor
 // ============================================================================
-type CPUData struct {
+type CPUDatast struct {
 	UsageTotal   float64   // CPU usage รวม
 	UsagePerCore []float64 // CPU usage ต่อ core
+	Times        []cpu.TimesStat
 }
 
 type CPUMonitor struct {
 	ticker   *time.Ticker
-	callback func(CPUData)
+	callback func(CPUDatast)
 }
 
 // สร้าง instance ใหม่
-func NewCPUMonitor(interval time.Duration, callback func(CPUData)) *CPUMonitor {
+func NewCPUMonitor(interval time.Duration, callback func(CPUDatast)) *CPUMonitor {
 	return &CPUMonitor{
 		ticker:   time.NewTicker(interval),
 		callback: callback,
@@ -132,11 +133,32 @@ func (m *CPUMonitor) Start() {
 			percentTotal, _ := cpu.Percent(100*time.Millisecond, false)
 			// ดึง CPU usage ต่อ core
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
+			//cpu.Times()
+			times, _ := cpu.Times(true)
+
+			for _, t := range times {
+
+				fmt.Println("CPU:", t.CPU)
+
+				fmt.Println("User:", t.User)
+				fmt.Println("System:", t.System)
+				fmt.Println("Idle:", t.Idle)
+				fmt.Println("Nice:", t.Nice)
+				fmt.Println("Iowait:", t.Iowait)
+				fmt.Println("Irq:", t.Irq)
+				fmt.Println("Softirq:", t.Softirq)
+				fmt.Println("Steal:", t.Steal)
+				fmt.Println("Guest:", t.Guest)
+				fmt.Println("GuestNice:", t.GuestNice)
+
+				fmt.Println()
+			}
 
 			if len(percentTotal) > 0 {
-				data := CPUData{
+				data := CPUDatast{
 					UsageTotal:   percentTotal[0],
 					UsagePerCore: percentPerCore,
+					Times:        times,
 				}
 				m.callback(data)
 			}

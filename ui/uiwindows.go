@@ -25,7 +25,7 @@ func CreateWindow() {
 	usagePerCoreLabel := widget.NewLabel("CPU...")
 
 	// สร้าง monitor
-	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.CPUData) {
+	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.CPUDatast) {
 		// แสดง usage รวม
 		fyne.Do(func() {
 			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal))
@@ -39,6 +39,25 @@ func CreateWindow() {
 		fyne.Do(func() {
 			usagePerCoreLabel.SetText(perCoreStr)
 		})
+
+		for _, t := range times {
+
+			fmt.Println("CPU:", t.CPU)
+
+			fmt.Println("User:", t.User)
+			fmt.Println("System:", t.System)
+			fmt.Println("Idle:", t.Idle)
+			fmt.Println("Nice:", t.Nice)
+			fmt.Println("Iowait:", t.Iowait)
+			fmt.Println("Irq:", t.Irq)
+			fmt.Println("Softirq:", t.Softirq)
+			fmt.Println("Steal:", t.Steal)
+			fmt.Println("Guest:", t.Guest)
+			fmt.Println("GuestNice:", t.GuestNice)
+
+			fmt.Println()
+		}
+
 	})
 	monitor.Start() // เริ่ม monitoring
 
