@@ -19,6 +19,7 @@ func CreateWindow() {
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 
 	detail := widget.NewLabel("detail...")
+	timesLabel := widget.NewLabel("timesLabel...")
 
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
@@ -40,22 +41,28 @@ func CreateWindow() {
 			usagePerCoreLabel.SetText(perCoreStr)
 		})
 
-		for _, t := range times {
+		times := " "
+		for t, usage := range data.Times {
+			//for _, t := range data.Times {
 
-			fmt.Println("CPU:", t.CPU)
+			times += fmt.Sprintf("CPU: %d %TimesStat\n", t, usage)
 
-			fmt.Println("User:", t.User)
-			fmt.Println("System:", t.System)
-			fmt.Println("Idle:", t.Idle)
-			fmt.Println("Nice:", t.Nice)
-			fmt.Println("Iowait:", t.Iowait)
-			fmt.Println("Irq:", t.Irq)
-			fmt.Println("Softirq:", t.Softirq)
-			fmt.Println("Steal:", t.Steal)
-			fmt.Println("Guest:", t.Guest)
-			fmt.Println("GuestNice:", t.GuestNice)
+			fyne.Do(func() {
+				timesLabel.SetText(times)
+			})
+			/*
+				fmt.Println("User:", t.User)
+				fmt.Println("System:", t.System)
+				fmt.Println("Idle:", t.Idle)
+				fmt.Println("Nice:", t.Nice)
+				fmt.Println("Iowait:", t.Iowait)
+				fmt.Println("Irq:", t.Irq)
+				fmt.Println("Softirq:", t.Softirq)
+				fmt.Println("Steal:", t.Steal)
+				fmt.Println("Guest:", t.Guest)
+				fmt.Println("GuestNice:", t.GuestNice)
 
-			fmt.Println()
+				fmt.Println()*/
 		}
 
 	})
@@ -100,6 +107,7 @@ func CreateWindow() {
 		))
 
 	cpu := container.NewAppTabs(
+		container.NewTabItem("TEST", container.NewScroll(timesLabel)),
 
 		container.NewTabItem("Overview", container.NewScroll(cpuinfolabel)),
 
