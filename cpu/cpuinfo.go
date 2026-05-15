@@ -130,7 +130,6 @@ func (m *CPUMonitor) Start() {
 		for range m.ticker.C {
 			// ดึง CPU usage รวม
 			percentTotal, _ := cpu.Percent(100*time.Millisecond, false)
-
 			// ดึง CPU usage ต่อ core
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
 
