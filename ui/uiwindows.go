@@ -53,9 +53,9 @@ func CreateWindow() {
 			fyne.Do(func() { //แยกออกมา กัน fyne พัง
 				timesLabel.SetText(timesStr)
 			})
+
 			fyne.Do(func() {
-				meanLabel.SetText(fmt.Sprintln(`User : โปรแกรมของผู้ใช้
-System : ระบบ
+				meanLabel.SetText(fmt.Sprintln(`***
 User : โปรแกรมของผู้ใช้
 System : ระบบ
 Idle : ไม่ได้ทำอะไร
@@ -64,7 +64,7 @@ Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ net
 Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
 Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
 Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
-Guest : เวลาที่ CPU ใช้งาน guest virtual machine\n
+Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`))
 			})
 
