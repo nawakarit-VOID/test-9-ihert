@@ -110,6 +110,18 @@ type CPUDatast struct {
 	UsageTotal   float64   // CPU usage รวม
 	UsagePerCore []float64 // CPU usage ต่อ core
 	Times        []cpu.TimesStat
+	//////////////////////
+	CpuName        string
+	UserTimes      []float64 // ค่า User ของแต่ละ CPU
+	SystemTimes    []float64 // ค่า System ของแต่ละ CPU
+	IdleTimes      []float64 // ค่า Idle ของแต่ละ CPU
+	NiceTimes      []float64
+	IowaitTimes    []float64
+	IrqTimes       []float64
+	SoftirqTimes   []float64
+	StealTimes     []float64
+	GuestTimes     []float64
+	GuestNiceTimes []float64
 }
 
 type CPUMonitor struct {
@@ -135,25 +147,47 @@ func (m *CPUMonitor) Start() {
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
 			//cpu.Times()
 			times, _ := cpu.Times(true)
-			/*
-				for _, t := range times {
 
-					fmt.Println("CPU:", t.CPU)
+			// แยกเฉพาะค่า float64
+			cpuData := CPUDatast{}
 
-					fmt.Println("User:", t.User)
-					fmt.Println("System:", t.System)
-					fmt.Println("Idle:", t.Idle)
-					fmt.Println("Nice:", t.Nice)
-					fmt.Println("Iowait:", t.Iowait)
-					fmt.Println("Irq:", t.Irq)
-					fmt.Println("Softirq:", t.Softirq)
-					fmt.Println("Steal:", t.Steal)
-					fmt.Println("Guest:", t.Guest)
-					fmt.Println("GuestNice:", t.GuestNice)
+			for _, stat := range times {
+				cpuData.UserTimes = append(cpuData.UserTimes, stat.User)
+				cpuData.SystemTimes = append(cpuData.SystemTimes, stat.System)
+				cpuData.IdleTimes = append(cpuData.IdleTimes, stat.Idle)
+			}
 
-					fmt.Println()
-				}
-			*/
+			for _, d := range times {
+				totalSeconds := 9425
+
+				hours := totalSeconds / 3600
+				remainingSeconds := totalSeconds % 3600
+				minutes := remainingSeconds / 60
+				seconds := remainingSeconds % 60
+				fmt.Printf("%d ชั่วโมง %d นาที %d วินาที\n", hours, minutes, seconds)
+				fmt.Printf("%02d:%02d:%02d\n", hours, minutes, seconds)
+
+				cpuData.UserTimes = append(cpuData.UserTimes, d.User)
+				cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
+				cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
+
+				/*
+					//fmt.Println("CPU:", t.CPU)
+					fmt.Println("USER:", t.User)
+						fmt.Println("System:", t.System)
+						fmt.Println("Idle:", t.Idle)
+						fmt.Println("Nice:", t.Nice)
+						fmt.Println("Iowait:", t.Iowait)
+						fmt.Println("Irq:", t.Irq)
+						fmt.Println("Softirq:", t.Softirq)
+						fmt.Println("Steal:", t.Steal)
+						fmt.Println("Guest:", t.Guest)
+						fmt.Println("GuestNice:", t.GuestNice)
+
+						fmt.Println()
+				*/
+			}
+
 			if len(percentTotal) > 0 {
 				data := CPUDatast{
 					UsageTotal:   percentTotal[0],
