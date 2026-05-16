@@ -109,19 +109,21 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			//widget.NewCard("CPU Information", "", container.NewVBox(
 			usageTotalLabel,
 			usagePerCoreLabel,
+		))
+
+	cputimeusage := container.NewScroll(
+		container.NewVBox(
 			timesLabel,
 			meanLabel,
 		))
 
 	cpu := container.NewAppTabs(
-		//container.NewTabItem("TEST", container.NewScroll(timesLabel)),
-
+		//container.NewTabItem("TEST", container.NewScroll(cputimeuse)),
 		container.NewTabItem("Overview", container.NewScroll(cpuinfolabel)),
-
 		container.NewTabItem("Detail", container.NewScroll(detail)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
-
+		container.NewTabItem("TimeUsage", container.NewScroll(cputimeusage)),
 	//cpu.Times()
 
 	)
