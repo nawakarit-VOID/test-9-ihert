@@ -171,16 +171,44 @@ func (m *CPUMonitor) Start() {
 
 				//var x int
 				var timesLabel string
+				var timesAVGLabel string
 
 				nCPU := d.CPU
 				tUser := int(math.Round(d.User))
+				tSystem := int(math.Round(d.System))
+				tIdle := int(math.Round(d.Idle))
+				tNice := int(math.Round(d.Nice))
+				tIowait := int(math.Round(d.Iowait))
+				tIrq := int(math.Round(d.Irq))
+				tSoftirq := int(math.Round(d.Softirq))
+				tSteal := int(math.Round(d.Steal))
+				tGuest := int(math.Round(d.Guest))
+				tGuestNice := int(math.Round(d.GuestNice))
 
 				thUser, tmUser, tsUser := processTimeS(tUser)
+				thSystem, tmSystem, tsSystem := processTimeS(tSystem)
+				thIdle, tmIdle, tsIdle := processTimeS(tIdle)
+				thNice, tmNice, tsNice := processTimeS(tNice)
+				thIowait, tmIowait, tsIowait := processTimeS(tIowait)
+				thIrq, tmIrq, tsIrq := processTimeS(tIrq)
+				thSoftirq, tmSoftirq, tsSoftirq := processTimeS(tSoftirq)
+				thSteal, tmSteal, tsSteal := processTimeS(tSteal)
+				thGuest, tmGuest, tsGuest := processTimeS(tGuest)
+				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(tGuestNice)
 
-				timesLabel += fmt.Sprintf("core [ %s ] # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
+				timesLabel += fmt.Sprintf("core [ %s ]\n", nCPU)
+				timesLabel += fmt.Sprintf("			User # %d ชั่วโมง %d นาที %d วินาที\n", thUser, tmUser, tsUser)
+				timesLabel += fmt.Sprintf("			System # %d ชั่วโมง %d นาที %d วินาที\n", thSystem, tmSystem, tsSystem)
+				timesLabel += fmt.Sprintf("			 Idle # %d ชั่วโมง %d นาที %d วินาที\n", thIdle, tmIdle, tsIdle)
+				timesLabel += fmt.Sprintf("			 Nice # %d ชั่วโมง %d นาที %d วินาที\n", thNice, tmNice, tsNice)
+				timesLabel += fmt.Sprintf("			 Iowait # %d ชั่วโมง %d นาที %d วินาที\n", thIowait, tmIowait, tsIowait)
+				timesLabel += fmt.Sprintf("			 Irq # %d ชั่วโมง %d นาที %d วินาที\n", thIrq, tmIrq, tsIrq)
+				timesLabel += fmt.Sprintf("			 Softirq # %d ชั่วโมง %d นาที %d วินาที\n", thSoftirq, tmSoftirq, tsSoftirq)
+				timesLabel += fmt.Sprintf("			 Steal # %d ชั่วโมง %d นาที %d วินาที\n", thSteal, tmSteal, tsSteal)
+				timesLabel += fmt.Sprintf("			 Guest # %d ชั่วโมง %d นาที %d วินาที\n", thGuest, tmGuest, tsGuest)
+				timesLabel += fmt.Sprintf("			 GuestNice# %d ชั่วโมง %d นาที %d วินาที\n", thGuestNice, tmGuestNice, tsGuestNice)
 
-				timesLabel += fmt.Sprintf("core [ %s ] # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
-
+				timesAVGLabel += fmt.Sprintf("core [ %s ]\n", nCPU)
 				/*
 					//fmt.Println("CPU:", t.CPU)
 					fmt.Println("USER:", t.User)
