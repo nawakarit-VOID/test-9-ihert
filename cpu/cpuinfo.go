@@ -2,6 +2,7 @@ package cpuinfo1
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/klauspost/cpuid/v2"
@@ -151,23 +152,26 @@ func (m *CPUMonitor) Start() {
 			// แยกเฉพาะค่า float64
 			cpuData := CPUDatast{}
 
-			for _, stat := range times {
-				cpuData.UserTimes = append(cpuData.UserTimes, stat.User)
-				cpuData.SystemTimes = append(cpuData.SystemTimes, stat.System)
-				cpuData.IdleTimes = append(cpuData.IdleTimes, stat.Idle)
-			}
-
 			for _, d := range times {
-				totalSeconds := 9425
-
-				hours := totalSeconds / 3600
-				remainingSeconds := totalSeconds % 3600
-				minutes := remainingSeconds / 60
-				seconds := remainingSeconds % 60
-				fmt.Printf("%d ชั่วโมง %d นาที %d วินาที\n", hours, minutes, seconds)
-				fmt.Printf("%02d:%02d:%02d\n", hours, minutes, seconds)
+				/*		//////////////////
+						totalSeconds := 9425
+						hours := totalSeconds / 3600
+						remainingSeconds := totalSeconds % 3600
+						minutes := remainingSeconds / 60
+						seconds := remainingSeconds % 60
+						fmt.Printf("%d ชั่วโมง %d นาที %d วินาที\n", hours, minutes, seconds)
+						fmt.Printf("%02d:%02d:%02d\n", hours, minutes, seconds)
+						////////////       */
+				//แปลงเป็น int
 
 				cpuData.UserTimes = append(cpuData.UserTimes, d.User)
+
+				var x int
+				x = int(math.Round(d.User))
+				Xh, Xm, Xs := processTimeS(x)
+
+				fmt.Printf("L1d : %d %d %d\n", Xh, Xm, Xs)
+
 				cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
 				cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
 
@@ -193,6 +197,7 @@ func (m *CPUMonitor) Start() {
 					UsageTotal:   percentTotal[0],
 					UsagePerCore: percentPerCore,
 					Times:        times,
+					UserTimes:    cpuData.UserTimes,
 				}
 				m.callback(data)
 			}
@@ -235,4 +240,24 @@ func processValue(value int) (int, string) {
 
 	}
 	return value, x
+}
+
+// ============================================================================
+// เวลา
+// ============================================================================
+var hours int
+var remainingSeconds int
+var minutes int
+var seconds int
+
+func processTimeS(value int) (int, int, int) {
+
+	//value = int(math.Round(value))
+
+	hours = value / 3600            // หาชั่วโมง และเศษวินาทีที่เหลือ
+	remainingSeconds = value % 3600 // (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ)
+	minutes = remainingSeconds / 60 //  นำเศษที่เหลือมาหาหน่วยนาที และวินาทีสุดท้าย
+	seconds = remainingSeconds % 60
+
+	return hours, minutes, seconds
 }
