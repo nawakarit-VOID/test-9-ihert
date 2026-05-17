@@ -112,17 +112,19 @@ type CPUDatast struct {
 	UsagePerCore []float64 // CPU usage ต่อ core
 	Times        []cpu.TimesStat
 	//////////////////////
-	CpuName        string
-	UserTimes      []float64 // ค่า User ของแต่ละ CPU
-	SystemTimes    []float64 // ค่า System ของแต่ละ CPU
-	IdleTimes      []float64 // ค่า Idle ของแต่ละ CPU
-	NiceTimes      []float64
-	IowaitTimes    []float64
-	IrqTimes       []float64
-	SoftirqTimes   []float64
-	StealTimes     []float64
-	GuestTimes     []float64
-	GuestNiceTimes []float64
+	/*	CpuName        string
+		UserTimes      []float64 // ค่า User ของแต่ละ CPU
+		SystemTimes    []float64 // ค่า System ของแต่ละ CPU
+		IdleTimes      []float64 // ค่า Idle ของแต่ละ CPU
+		NiceTimes      []float64
+		IowaitTimes    []float64
+		IrqTimes       []float64
+		SoftirqTimes   []float64
+		StealTimes     []float64
+		GuestTimes     []float64
+		GuestNiceTimes []float64
+	*/
+
 }
 
 type CPUMonitor struct {
@@ -150,7 +152,7 @@ func (m *CPUMonitor) Start() {
 			times, _ := cpu.Times(true)
 
 			// แยกเฉพาะค่า float64
-			cpuData := CPUDatast{}
+			//cpuData := CPUDatast{}
 
 			for _, d := range times {
 				/*		//////////////////
@@ -163,17 +165,21 @@ func (m *CPUMonitor) Start() {
 						fmt.Printf("%02d:%02d:%02d\n", hours, minutes, seconds)
 						////////////       */
 				//แปลงเป็น int
+				//cpuData.UserTimes = append(cpuData.UserTimes, d.User)
+				//cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
+				//cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
 
-				cpuData.UserTimes = append(cpuData.UserTimes, d.User)
+				//var x int
+				var timesLabel string
 
-				var x int
-				x = int(math.Round(d.User))
-				Xh, Xm, Xs := processTimeS(x)
+				nCPU := d.CPU
+				tUser := int(math.Round(d.User))
 
-				fmt.Printf("L1d : %d %d %d\n", Xh, Xm, Xs)
+				thUser, tmUser, tsUser := processTimeS(tUser)
 
-				cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
-				cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
+				timesLabel += fmt.Sprintf("core [ %s ] # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
+
+				timesLabel += fmt.Sprintf("core [ %s ] # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
 
 				/*
 					//fmt.Println("CPU:", t.CPU)
@@ -197,7 +203,7 @@ func (m *CPUMonitor) Start() {
 					UsageTotal:   percentTotal[0],
 					UsagePerCore: percentPerCore,
 					Times:        times,
-					UserTimes:    cpuData.UserTimes,
+					//UserTimes:    cpuData.UserTimes,
 				}
 				m.callback(data)
 			}
@@ -251,13 +257,13 @@ var minutes int
 var seconds int
 
 func processTimeS(value int) (int, int, int) {
-
-	//value = int(math.Round(value))
-
 	hours = value / 3600            // หาชั่วโมง และเศษวินาทีที่เหลือ
 	remainingSeconds = value % 3600 // (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ)
 	minutes = remainingSeconds / 60 //  นำเศษที่เหลือมาหาหน่วยนาที และวินาทีสุดท้าย
 	seconds = remainingSeconds % 60
-
 	return hours, minutes, seconds
 }
+
+// ============================================================================
+// SECTION_NAME
+// ============================================================================
