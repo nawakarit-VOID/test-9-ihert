@@ -151,7 +151,6 @@ func (m *CPUMonitor) Start() {
 			//cpu.Times()
 			times, _ := cpu.Times(true)
 
-			// แยกเฉพาะค่า float64
 			//cpuData := CPUDatast{}
 
 			for _, d := range times {
@@ -208,42 +207,24 @@ func (m *CPUMonitor) Start() {
 				timesLabel += fmt.Sprintf("	GuestNice# %d ชั่วโมง %d นาที %d วินาที\n", thGuestNice, tmGuestNice, tsGuestNice)
 
 				fmt.Print(timesLabel)
-				//AVG
-
-				var timesAVGLabel string
-
-				var thAvg int
-				var tmAvg int
-				var tsAvg int
-
-				thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
-				tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
-				tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
-
-				fmt.Println(thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
-				//fmt.Println(tmAvg)
-				//fmt.Println(tsAvg)
-
-				//tUser = tUser + tUser
-
-				timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n			User # %d ชั่วโมง %d นาที %d วินาที\n", thUser, tmUser, tsUser)
-
-				/*
-					//fmt.Println("CPU:", t.CPU)
-					fmt.Println("USER:", t.User)
-						fmt.Println("System:", t.System)
-						fmt.Println("Idle:", t.Idle)
-						fmt.Println("Nice:", t.Nice)
-						fmt.Println("Iowait:", t.Iowait)
-						fmt.Println("Irq:", t.Irq)
-						fmt.Println("Softirq:", t.Softirq)
-						fmt.Println("Steal:", t.Steal)
-						fmt.Println("Guest:", t.Guest)
-						fmt.Println("GuestNice:", t.GuestNice)
-
-						fmt.Println()
-				*/
 			}
+			//AVG
+			/*			thUser, tmUser, tsUser := processTimeS(tUser)
+
+						var timesAVGLabel string
+						var thAvg int
+						var tmAvg int
+						var tsAvg int
+
+						thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
+						tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
+						tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
+
+						//fmt.Println( thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
+						timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", thAvg, tmAvg, tsAvg)
+						fmt.Printf(timesAVGLabel)
+			*/
+			fmt.Print(percentPerCore) //test
 
 			if len(percentTotal) > 0 {
 				data := CPUDatast{
