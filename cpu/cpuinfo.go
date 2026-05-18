@@ -209,22 +209,20 @@ func (m *CPUMonitor) Start() {
 
 				fmt.Print(timesLabel)
 				//AVG
-				logical, _ := cpu.Counts(true)
 
 				var timesAVGLabel string
-				x := logical
+
 				var thAvg int
 				var tmAvg int
 				var tsAvg int
-				for i := 1; i <= x; i++ {
-					thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
 
-					fmt.Println(i)
-					fmt.Println(thAvg)
-					fmt.Println(tmAvg)
-					fmt.Println(tsAvg)
+				thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
+				tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
+				tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
 
-				}
+				fmt.Println(thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
+				//fmt.Println(tmAvg)
+				//fmt.Println(tsAvg)
 
 				//tUser = tUser + tUser
 
