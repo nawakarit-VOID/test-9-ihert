@@ -117,8 +117,7 @@ type StCPUData struct {
 	//SystemTimes    []float64 // ค่า System ของแต่ละ CPU
 	TimesAVGLabel string // ค่า Idle ของแต่ละ CPU
 	TimesLabel    string
-	ThAvg         int
-	CpuData       int
+
 	//NiceTimes      []float64
 	//IowaitTimes    []float64
 	//IrqTimes       []float64
@@ -224,22 +223,15 @@ func (m *CPUMonitor) Start() {
 				timesAVGLabel += fmt.Sprintf("Core [ %s AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thAvg, tmAvg, tsAvg)
 				//cpuData.TimesAVGLabel = append(cpuData.TimesAVGLabel, timesAVGLabel)
 			}
-			//var timesAVGLabel string
-			//fmt.Print(percentPerCore)    //test
-			//timesAVGLabel = fmt.Print(cpuData.TimesAVGLabel) //test
 
 			if len(percentTotal) > 0 {
 				data := StCPUData{
-					UsageTotal:    percentTotal[0],
-					UsagePerCore:  percentPerCore,
-					Times:         times,
-					ThAvg:         thAvg,
-					TimesAVGLabel: timesAVGLabel,
+					UsageTotal:   percentTotal[0],
+					UsagePerCore: percentPerCore,
+					Times:        times,
+					//
 					TimesLabel:    timesLabel,
-					//CpuData:      cpuData,
-					//TimesAVGLabel: timesAVGLabel,
-
-					//UserTimes:    cpuData.UserTimes,
+					TimesAVGLabel: timesAVGLabel,
 				}
 				m.callback(data)
 			}

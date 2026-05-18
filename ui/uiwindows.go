@@ -74,7 +74,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 		}
 		fyne.Do(func() {
 			timesAVGLabel.SetText(fmt.Sprintf("%s", data.TimesAVGLabel))
-			xLabel.SetText(fmt.Sprintf("%d", data.ThAvg))
+			//xLabel.SetText(fmt.Sprintf("%d", data.ThAvg))
 			yLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))
 
 		})
