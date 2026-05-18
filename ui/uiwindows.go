@@ -26,9 +26,12 @@ func CreateWindow() {
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
 	usagePerCoreLabel := widget.NewLabel("CPU...")
+	timesAVGLabel := widget.NewLabel("TimesAVGLabel...")
+	xLabel := widget.NewLabel("xLabel...")
+	yLabel := widget.NewLabel("yLabel...")
 
 	// สร้าง monitor
-	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.CPUDatast) {
+	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 		// แสดง usage รวม
 		fyne.Do(func() {
 			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal))
@@ -69,6 +72,12 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			})
 
 		}
+		fyne.Do(func() {
+			timesAVGLabel.SetText(fmt.Sprintf("%s", data.TimesAVGLabel))
+			xLabel.SetText(fmt.Sprintf("%d", data.ThAvg))
+			yLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))
+
+		})
 
 	})
 	monitor.Start() // เริ่ม monitoring
@@ -115,6 +124,9 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 		container.NewVBox(
 			timesLabel,
 			meanLabel,
+			timesAVGLabel,
+			xLabel,
+			yLabel,
 		))
 
 	cpu := container.NewAppTabs(

@@ -107,33 +107,35 @@ func CPUdata() map[string]interface{} {
 // ============================================================================
 // monitor
 // ============================================================================
-type CPUDatast struct {
+type StCPUData struct {
 	UsageTotal   float64   // CPU usage รวม
 	UsagePerCore []float64 // CPU usage ต่อ core
 	Times        []cpu.TimesStat
 	//////////////////////
-	/*	CpuName        string
-		UserTimes      []float64 // ค่า User ของแต่ละ CPU
-		SystemTimes    []float64 // ค่า System ของแต่ละ CPU
-		IdleTimes      []float64 // ค่า Idle ของแต่ละ CPU
-		NiceTimes      []float64
-		IowaitTimes    []float64
-		IrqTimes       []float64
-		SoftirqTimes   []float64
-		StealTimes     []float64
-		GuestTimes     []float64
-		GuestNiceTimes []float64
-	*/
+	//CpuName        string
+	//UserTimes      []float64 // ค่า User ของแต่ละ CPU
+	//SystemTimes    []float64 // ค่า System ของแต่ละ CPU
+	TimesAVGLabel string // ค่า Idle ของแต่ละ CPU
+	TimesLabel    string
+	ThAvg         int
+	CpuData       int
+	//NiceTimes      []float64
+	//IowaitTimes    []float64
+	//IrqTimes       []float64
+	//SoftirqTimes   []float64
+	//StealTimes     []float64
+	//GuestTimes     []float64
+	//GuestNiceTimes []float64
 
 }
 
 type CPUMonitor struct {
 	ticker   *time.Ticker
-	callback func(CPUDatast)
+	callback func(StCPUData)
 }
 
 // สร้าง instance ใหม่
-func NewCPUMonitor(interval time.Duration, callback func(CPUDatast)) *CPUMonitor {
+func NewCPUMonitor(interval time.Duration, callback func(StCPUData)) *CPUMonitor {
 	return &CPUMonitor{
 		ticker:   time.NewTicker(interval),
 		callback: callback,
@@ -151,7 +153,12 @@ func (m *CPUMonitor) Start() {
 			//cpu.Times()
 			times, _ := cpu.Times(true)
 
-			//cpuData := CPUDatast{}
+			//cpuData := StCPUData{}
+			var timesLabel string
+			var timesAVGLabel string
+			var thAvg int
+			var tmAvg int
+			var tsAvg int
 
 			for _, d := range times {
 				/*		//////////////////
@@ -168,10 +175,8 @@ func (m *CPUMonitor) Start() {
 				//cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
 				//cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
 
-				//var x int
-				var timesLabel string
-
 				nCPU := d.CPU
+				//แปลงเป็นตัวเลข
 				tUser := int(math.Round(d.User))
 				tSystem := int(math.Round(d.System))
 				tIdle := int(math.Round(d.Idle))
@@ -207,30 +212,33 @@ func (m *CPUMonitor) Start() {
 				timesLabel += fmt.Sprintf("	GuestNice# %d ชั่วโมง %d นาที %d วินาที\n", thGuestNice, tmGuestNice, tsGuestNice)
 
 				fmt.Print(timesLabel)
+
+				//AVG
+
+				thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
+				tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
+				tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
+
+				//fmt.Println( thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
+				//timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", thAvg, tmAvg, tsAvg)
+				timesAVGLabel += fmt.Sprintf("Core [ %s AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thAvg, tmAvg, tsAvg)
+				//cpuData.TimesAVGLabel = append(cpuData.TimesAVGLabel, timesAVGLabel)
 			}
-			//AVG
-			/*			thUser, tmUser, tsUser := processTimeS(tUser)
-
-						var timesAVGLabel string
-						var thAvg int
-						var tmAvg int
-						var tsAvg int
-
-						thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
-						tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
-						tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
-
-						//fmt.Println( thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
-						timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", thAvg, tmAvg, tsAvg)
-						fmt.Printf(timesAVGLabel)
-			*/
-			fmt.Print(percentPerCore) //test
+			//var timesAVGLabel string
+			//fmt.Print(percentPerCore)    //test
+			//timesAVGLabel = fmt.Print(cpuData.TimesAVGLabel) //test
 
 			if len(percentTotal) > 0 {
-				data := CPUDatast{
-					UsageTotal:   percentTotal[0],
-					UsagePerCore: percentPerCore,
-					Times:        times,
+				data := StCPUData{
+					UsageTotal:    percentTotal[0],
+					UsagePerCore:  percentPerCore,
+					Times:         times,
+					ThAvg:         thAvg,
+					TimesAVGLabel: timesAVGLabel,
+					TimesLabel:    timesLabel,
+					//CpuData:      cpuData,
+					//TimesAVGLabel: timesAVGLabel,
+
 					//UserTimes:    cpuData.UserTimes,
 				}
 				m.callback(data)
@@ -252,26 +260,21 @@ func processValue(value int) (int, string) {
 		value = value / 1099511627776
 		x = "TB"
 		//fmt.Printf("%d %s\n", value, v)
-
 	case value >= 1073741824:
 		value = value / 1073741824
 		x = "GB"
 		//fmt.Printf("%d %s\n", value, v)
-
 	case value >= 1048576:
 		value = value / 1048576
 		x = "MB"
 		//fmt.Printf("%d %s\n", value, v)
-
 	case value >= 1000:
 		value = value / 1024
 		x = "KB"
 		//fmt.Printf("%d %s\n", value, v)
-
 	default:
 		x = "B"
 		//fmt.Printf("%d %s\n", value, v)
-
 	}
 	return value, x
 }
