@@ -224,6 +224,12 @@ func (m *CPUMonitor) Start() {
 						tvalidCount++
 					}
 				}
+				// แบบที่ 2: หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
+				// ป้องกันเคสที่ validCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
+				var avgWithoutZeros float64
+				if tvalidCount > 0 {
+					avgWithoutZeros = float64(sum) / float64(validCount)
+				}
 
 				/*
 					tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
