@@ -2,7 +2,6 @@ package cpuinfo1
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/klauspost/cpuid/v2"
@@ -33,25 +32,7 @@ func CPUdata() map[string]interface{} {
 		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
 			i, cpu.CoreID, cpu.PhysicalID)
 	}
-	/*
-		for _, t := range times {
 
-			fmt.Println("CPU:", t.CPU)
-
-			fmt.Println("User:", t.User)
-			fmt.Println("System:", t.System)
-			fmt.Println("Idle:", t.Idle)
-			fmt.Println("Nice:", t.Nice)
-			fmt.Println("Iowait:", t.Iowait)
-			fmt.Println("Irq:", t.Irq)
-			fmt.Println("Softirq:", t.Softirq)
-			fmt.Println("Steal:", t.Steal)
-			fmt.Println("Guest:", t.Guest)
-			fmt.Println("GuestNice:", t.GuestNice)
-
-			fmt.Println()
-		}
-	*/
 	// cpuid
 	cpuInfo := cpuid.CPU
 
@@ -64,11 +45,6 @@ func CPUdata() map[string]interface{} {
 	c1i, xc1i := processValue(c1i)
 	c2, xc2 := processValue(c2)
 	c3, xc3 := processValue(c3)
-
-	//fmt.Printf("c1d = %d %s\n", c1d, xc1d)
-	//fmt.Printf("c1i = %d %s\n", c1i, xc1i)
-	//fmt.Printf("c2 = %d %s\n", c2, xc2)
-	//fmt.Printf("c3 = %d %s\n", c3, xc3)
 
 	var cache string
 	cache += fmt.Sprintf("L1d : %d %s\n", c1d, xc1d)
@@ -175,29 +151,40 @@ func (m *CPUMonitor) Start() {
 				//cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
 
 				nCPU := d.CPU
-				//แปลงเป็นตัวเลข
-				tUser := int(math.Round(d.User))
-				tSystem := int(math.Round(d.System))
-				tIdle := int(math.Round(d.Idle))
-				tNice := int(math.Round(d.Nice))
-				tIowait := int(math.Round(d.Iowait))
-				tIrq := int(math.Round(d.Irq))
-				tSoftirq := int(math.Round(d.Softirq))
-				tSteal := int(math.Round(d.Steal))
-				tGuest := int(math.Round(d.Guest))
-				tGuestNice := int(math.Round(d.GuestNice))
+				/*				//แปลงเป็นตัวเลข
+								tUser := int(math.Round(d.User))
+								tSystem := int(math.Round(d.System))
+								tIdle := int(math.Round(d.Idle))
+								tNice := int(math.Round(d.Nice))
+								tIowait := int(math.Round(d.Iowait))
+								tIrq := int(math.Round(d.Irq))
+								tSoftirq := int(math.Round(d.Softirq))
+								tSteal := int(math.Round(d.Steal))
+								tGuest := int(math.Round(d.Guest))
+								tGuestNice := int(math.Round(d.GuestNice))
 
-				//เอาไปคิดเวลา
-				thUser, tmUser, tsUser := processTimeS(tUser)
-				thSystem, tmSystem, tsSystem := processTimeS(tSystem)
-				thIdle, tmIdle, tsIdle := processTimeS(tIdle)
-				thNice, tmNice, tsNice := processTimeS(tNice)
-				thIowait, tmIowait, tsIowait := processTimeS(tIowait)
-				thIrq, tmIrq, tsIrq := processTimeS(tIrq)
-				thSoftirq, tmSoftirq, tsSoftirq := processTimeS(tSoftirq)
-				thSteal, tmSteal, tsSteal := processTimeS(tSteal)
-				thGuest, tmGuest, tsGuest := processTimeS(tGuest)
-				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(tGuestNice)
+								//เอาไปคิดเวลา
+								thUser, tmUser, tsUser := processTimeS(tUser)
+								thSystem, tmSystem, tsSystem := processTimeS(tSystem)
+								thIdle, tmIdle, tsIdle := processTimeS(tIdle)
+								thNice, tmNice, tsNice := processTimeS(tNice)
+								thIowait, tmIowait, tsIowait := processTimeS(tIowait)
+								thIrq, tmIrq, tsIrq := processTimeS(tIrq)
+								thSoftirq, tmSoftirq, tsSoftirq := processTimeS(tSoftirq)
+								thSteal, tmSteal, tsSteal := processTimeS(tSteal)
+								thGuest, tmGuest, tsGuest := processTimeS(tGuest)
+								thGuestNice, tmGuestNice, tsGuestNice := processTimeS(tGuestNice)
+				*/
+				thUser, tmUser, tsUser := processTimeS(d.User)
+				thSystem, tmSystem, tsSystem := processTimeS(d.System)
+				thIdle, tmIdle, tsIdle := processTimeS(d.Idle)
+				thNice, tmNice, tsNice := processTimeS(d.Nice)
+				thIowait, tmIowait, tsIowait := processTimeS(d.Iowait)
+				thIrq, tmIrq, tsIrq := processTimeS(d.Irq)
+				thSoftirq, tmSoftirq, tsSoftirq := processTimeS(d.Softirq)
+				thSteal, tmSteal, tsSteal := processTimeS(d.Steal)
+				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
+				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
 
 				timesLabel += fmt.Sprintf("core [ %s ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
 				timesLabel += fmt.Sprintf("	System # %d ชั่วโมง %d นาที %d วินาที\n", thSystem, tmSystem, tsSystem)
@@ -212,24 +199,26 @@ func (m *CPUMonitor) Start() {
 				fmt.Print(timesLabel)
 
 				//AVG
-				tAvgscores := []int{tUser, tSystem, tIdle, tNice, tIowait, tIrq, tSoftirq, tSteal, tGuest, tGuestNice}
-				sumtAvg := 0
-				tvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
+				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
+				thsumAvg := 0
+				thvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
 
-				for _, tscore := range tAvgscores {
-					sumtAvg += tscore
+				for _, thscore := range thAvgscores {
+					thsumAvg += thscore
 
 					// ถ้าคะแนนมากกว่า 0 ให้นับเพิ่ม
-					if tscore > 0 {
-						tvalidCount++
+					if thscore > 0 {
+						thvalidCount++
 					}
 				}
-				// แบบที่ 2: หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
-				// ป้องกันเคสที่ validCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
+				// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
+				// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
 				var avgWithoutZeros float64
-				if tvalidCount > 0 {
-					avgWithoutZeros = float64(sum) / float64(validCount)
+				if thvalidCount > 0 {
+					avgWithoutZeros = float64(thsumAvg) / float64(thvalidCount)
 				}
+				fmt.Printf("ผลรวมคะแนน: %d\n", thsumAvg)
+				fmt.Printf("2. ค่าเฉลี่ยแบบนับเฉพาะคนมีคะแนน (หาร %d): %.2f\n", thvalidCount, avgWithoutZeros)
 
 				/*
 					tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
@@ -296,11 +285,12 @@ var remainingSeconds int
 var minutes int
 var seconds int
 
-func processTimeS(value int) (int, int, int) {
-	hours = value / 3600            // หาชั่วโมง และเศษวินาทีที่เหลือ
-	remainingSeconds = value % 3600 // (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ)
-	minutes = remainingSeconds / 60 //  นำเศษที่เหลือมาหาหน่วยนาที และวินาทีสุดท้าย
-	seconds = remainingSeconds % 60
+func processTimeS(value float64) (int, int, int) {
+
+	hours = int(value) / 3600            // หาชั่วโมง  (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ) *หารไม่เอาเศษ
+	remainingSeconds = int(value) % 3600 //หาเศษวินาทีที่เหลือ *% หารเพื่อเอาเศษ
+	minutes = remainingSeconds / 60      //  นำเศษที่เหลือมาหาหน่วยนาที *แบบไม่เอาเศษและวินาทีสุดท้าย
+	seconds = remainingSeconds % 60      //และวินาทีสุดท้าย *หารเอาเศษ
 
 	return hours, minutes, seconds
 }
