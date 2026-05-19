@@ -212,10 +212,23 @@ func (m *CPUMonitor) Start() {
 				fmt.Print(timesLabel)
 
 				//AVG
-				thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
-				tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
-				tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
+				tAvgscores := []int{tUser, tSystem, tIdle, tNice, tIowait, tIrq, tSoftirq, tSteal, tGuest, tGuestNice}
+				sumtAvg := 0
+				tvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
 
+				for _, tscore := range tAvgscores {
+					sumtAvg += tscore
+
+					// ถ้าคะแนนมากกว่า 0 ให้นับเพิ่ม
+					if tscore > 0 {
+						tvalidCount++
+					}
+				}
+
+				/*
+					tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
+					tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
+				*/
 				//fmt.Println( thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
 				//timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", thAvg, tmAvg, tsAvg)
 				timesAVGLabel += fmt.Sprintf("Core [ %s AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thAvg, tmAvg, tsAvg)
