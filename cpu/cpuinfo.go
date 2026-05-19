@@ -91,9 +91,8 @@ type StCPUData struct {
 	//CpuName        string
 	//UserTimes      []float64 // ค่า User ของแต่ละ CPU
 	//SystemTimes    []float64 // ค่า System ของแต่ละ CPU
-	TimesAVGLabel string // ค่า Idle ของแต่ละ CPU
 	TimesLabel    string
-
+	TotalavgLabel string
 	//NiceTimes      []float64
 	//IowaitTimes    []float64
 	//IrqTimes       []float64
@@ -130,51 +129,12 @@ func (m *CPUMonitor) Start() {
 
 			//cpuData := StCPUData{}
 			var timesLabel string
-			var timesAVGLabel string
-			var thAvg int
-			var tmAvg int
-			var tsAvg int
+			var totalavgLabel string
 
 			for _, d := range times {
-				/*		//////////////////
-						totalSeconds := 9425
-						hours := totalSeconds / 3600
-						remainingSeconds := totalSeconds % 3600
-						minutes := remainingSeconds / 60
-						seconds := remainingSeconds % 60
-						fmt.Printf("%d ชั่วโมง %d นาที %d วินาที\n", hours, minutes, seconds)
-						fmt.Printf("%02d:%02d:%02d\n", hours, minutes, seconds)
-						////////////       */
-				//แปลงเป็น int
-				//cpuData.UserTimes = append(cpuData.UserTimes, d.User)
-				//cpuData.SystemTimes = append(cpuData.SystemTimes, d.System)
-				//cpuData.IdleTimes = append(cpuData.IdleTimes, d.Idle)
 
 				nCPU := d.CPU
-				/*				//แปลงเป็นตัวเลข
-								tUser := int(math.Round(d.User))
-								tSystem := int(math.Round(d.System))
-								tIdle := int(math.Round(d.Idle))
-								tNice := int(math.Round(d.Nice))
-								tIowait := int(math.Round(d.Iowait))
-								tIrq := int(math.Round(d.Irq))
-								tSoftirq := int(math.Round(d.Softirq))
-								tSteal := int(math.Round(d.Steal))
-								tGuest := int(math.Round(d.Guest))
-								tGuestNice := int(math.Round(d.GuestNice))
 
-								//เอาไปคิดเวลา
-								thUser, tmUser, tsUser := processTimeS(tUser)
-								thSystem, tmSystem, tsSystem := processTimeS(tSystem)
-								thIdle, tmIdle, tsIdle := processTimeS(tIdle)
-								thNice, tmNice, tsNice := processTimeS(tNice)
-								thIowait, tmIowait, tsIowait := processTimeS(tIowait)
-								thIrq, tmIrq, tsIrq := processTimeS(tIrq)
-								thSoftirq, tmSoftirq, tsSoftirq := processTimeS(tSoftirq)
-								thSteal, tmSteal, tsSteal := processTimeS(tSteal)
-								thGuest, tmGuest, tsGuest := processTimeS(tGuest)
-								thGuestNice, tmGuestNice, tsGuestNice := processTimeS(tGuestNice)
-				*/
 				thUser, tmUser, tsUser := processTimeS(d.User)
 				thSystem, tmSystem, tsSystem := processTimeS(d.System)
 				thIdle, tmIdle, tsIdle := processTimeS(d.Idle)
@@ -186,48 +146,70 @@ func (m *CPUMonitor) Start() {
 				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
 				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
 
-				timesLabel += fmt.Sprintf("core [ %s ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thUser, tmUser, tsUser)
-				timesLabel += fmt.Sprintf("	System # %d ชั่วโมง %d นาที %d วินาที\n", thSystem, tmSystem, tsSystem)
-				timesLabel += fmt.Sprintf("	Idle # %d ชั่วโมง %d นาที %d วินาที\n", thIdle, tmIdle, tsIdle)
-				timesLabel += fmt.Sprintf("	Nice # %d ชั่วโมง %d นาที %d วินาที\n", thNice, tmNice, tsNice)
-				timesLabel += fmt.Sprintf("	Iowait # %d ชั่วโมง %d นาที %d วินาที\n", thIowait, tmIowait, tsIowait)
-				timesLabel += fmt.Sprintf("	Irq # %d ชั่วโมง %d นาที %d วินาที\n", thIrq, tmIrq, tsIrq)
-				timesLabel += fmt.Sprintf("	Softirq # %d ชั่วโมง %d นาที %d วินาที\n", thSoftirq, tmSoftirq, tsSoftirq)
-				timesLabel += fmt.Sprintf("	Steal # %d ชั่วโมง %d นาที %d วินาที\n", thSteal, tmSteal, tsSteal)
-				timesLabel += fmt.Sprintf("	Guest # %d ชั่วโมง %d นาที %d วินาที\n", thGuest, tmGuest, tsGuest)
-				timesLabel += fmt.Sprintf("	GuestNice# %d ชั่วโมง %d นาที %d วินาที\n", thGuestNice, tmGuestNice, tsGuestNice)
-				fmt.Print(timesLabel)
+				timesLabel += fmt.Sprintf("[ %s ]\n	User # [ %dh : %dm : %ds ]\n", nCPU, thUser, tmUser, tsUser)
+				timesLabel += fmt.Sprintf("	System # [ %dh : %dm : %ds ]\n", thSystem, tmSystem, tsSystem)
+				timesLabel += fmt.Sprintf("	Idle # [ %dh : %dm : %ds ]\n", thIdle, tmIdle, tsIdle)
+				timesLabel += fmt.Sprintf("	Nice # [ %dh : %dm : %ds ]\n", thNice, tmNice, tsNice)
+				timesLabel += fmt.Sprintf("	Iowait # [ %dh : %dm : %ds ]\n", thIowait, tmIowait, tsIowait)
+				timesLabel += fmt.Sprintf("	Irq # [ %dh : %dm : %ds ]\n", thIrq, tmIrq, tsIrq)
+				timesLabel += fmt.Sprintf("	Softirq # [ %dh : %dm : %ds ]\n", thSoftirq, tmSoftirq, tsSoftirq)
+				timesLabel += fmt.Sprintf("	Steal # [ %dh : %dm : %ds ]\n", thSteal, tmSteal, tsSteal)
+				timesLabel += fmt.Sprintf("	Guest # [ %dh : %dm : %ds ]\n", thGuest, tmGuest, tsGuest)
+				timesLabel += fmt.Sprintf("	GuestNice # [ %dh : %dm : %ds ]\n", thGuestNice, tmGuestNice, tsGuestNice)
+				//fmt.Print(timesLabel)
 
-				//AVG
+				//AVG//
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
+				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
+				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
+
 				thsumAvg := 0
+				tmsumAvg := 0
+				tssumAvg := 0
+
 				thvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
+				tmvalidCount := 0
+				tsvalidCount := 0
 
 				for _, thscore := range thAvgscores {
 					thsumAvg += thscore
-
-					// ถ้าคะแนนมากกว่า 0 ให้นับเพิ่ม
-					if thscore > 0 {
+					if thscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
 						thvalidCount++
 					}
 				}
+
+				for _, tmscore := range tmAvgscores {
+					tmsumAvg += tmscore
+					if tmscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+						tmvalidCount++
+					}
+				}
+
+				for _, tsscore := range tsAvgscores {
+					tssumAvg += tsscore
+					if tsscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+						tsvalidCount++
+					}
+				}
+
 				// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
 				// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
-				var avgWithoutZeros float64
+				var thavg float64
 				if thvalidCount > 0 {
-					avgWithoutZeros = float64(thsumAvg) / float64(thvalidCount)
+					thavg = float64(thsumAvg) / float64(thvalidCount)
 				}
-				fmt.Printf("ผลรวมคะแนน: %d\n", thsumAvg)
-				fmt.Printf("2. ค่าเฉลี่ยแบบนับเฉพาะคนมีคะแนน (หาร %d): %.2f\n", thvalidCount, avgWithoutZeros)
+				var tmavg float64
+				if tmvalidCount > 0 {
+					tmavg = float64(tmsumAvg) / float64(tmvalidCount)
+				}
+				var tsavg float64
+				if tsvalidCount > 0 {
+					tsavg = float64(tssumAvg) / float64(tsvalidCount)
+				}
 
-				/*
-					tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
-					tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10
-				*/
-				//fmt.Println( thAvg, "ชั่วโมง", tmAvg, "นาที", tsAvg, "วินาที")
-				//timesAVGLabel += fmt.Sprintf("Core [ AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", thAvg, tmAvg, tsAvg)
-				timesAVGLabel += fmt.Sprintf("Core [ %s AVG ]\n	User # %d ชั่วโมง %d นาที %d วินาที\n", nCPU, thAvg, tmAvg, tsAvg)
-				//cpuData.TimesAVGLabel = append(cpuData.TimesAVGLabel, timesAVGLabel)
+				totalavgLabel += fmt.Sprintf("[ %s ] เฉลี่ย [ %.fh : %.fm : %.fs ]\n", nCPU, thavg, tmavg, tsavg)
+				//fmt.Print(totalavgLabel)
+
 			}
 
 			if len(percentTotal) > 0 {
@@ -237,7 +219,7 @@ func (m *CPUMonitor) Start() {
 					Times:        times,
 					//
 					TimesLabel:    timesLabel,
-					TimesAVGLabel: timesAVGLabel,
+					TotalavgLabel: totalavgLabel,
 				}
 				m.callback(data)
 			}

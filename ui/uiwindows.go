@@ -19,32 +19,28 @@ func CreateWindow() {
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 
 	detail := widget.NewLabel("detail...")
-	timesLabel := widget.NewLabel("timesLabel...")
-	meanLabel := widget.NewLabel("meanLabel...")
-	//mean1Label := widget.NewLabel("mean1Label...")
 
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
 	usagePerCoreLabel := widget.NewLabel("CPU...")
-	timesAVGLabel := widget.NewLabel("TimesAVGLabel...")
-	xLabel := widget.NewLabel("xLabel...")
-	yLabel := widget.NewLabel("yLabel...")
+	totalavgLabel := widget.NewLabel("TotalavgLabel...")
+
+	timesStrLabel := widget.NewLabel("timestimesStrLabel...")
+	timesLabel := widget.NewLabel("timesLabel...")
+	meanLabel := widget.NewLabel("meanLabel...")
 
 	// สร้าง monitor
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
-		// แสดง usage รวม
-		fyne.Do(func() {
-			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal))
-		})
 
+		/*		fyne.Do(func() {
+					usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal))
+				})
+		*/
 		// แสดง usage ต่อ core
 		var perCoreStr string = ""
 		for i, usage := range data.UsagePerCore {
 			perCoreStr += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, usage)
 		}
-		fyne.Do(func() {
-			usagePerCoreLabel.SetText(perCoreStr)
-		})
 
 		var timesStr string = ""
 		for c, v := range data.Times {
@@ -53,12 +49,15 @@ func CreateWindow() {
 				"CPU: [ %d ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
 				c, v.User, v.System, v.Idle, v.Nice, v.Iowait, v.Irq, v.Softirq, v.Steal, v.Guest, v.GuestNice)
 
-			fyne.Do(func() { //แยกออกมา กัน fyne พัง
-				timesLabel.SetText(timesStr)
-			})
+		}
 
-			fyne.Do(func() {
-				meanLabel.SetText(fmt.Sprintln(`***
+		fyne.Do(func() {
+			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal)) // แสดง usage รวม
+			usagePerCoreLabel.SetText(perCoreStr)                                       // แสดง usage ต่อ core
+			timesStrLabel.SetText(timesStr)                                             //cpu.Times rang
+			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel))                //แสดง timeUse Avg all core
+			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))                      //แสดง timeUse all core
+			meanLabel.SetText(fmt.Sprintln(`***
 User : โปรแกรมของผู้ใช้
 System : ระบบ
 Idle : ไม่ได้ทำอะไร
@@ -69,17 +68,10 @@ Softirq : เวลาที่ใช้จัดการ Software ที่ข
 Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
 Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`))
-			})
-
-		}
-		fyne.Do(func() {
-			yLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))
-			timesAVGLabel.SetText(fmt.Sprintf("%s", data.TimesAVGLabel))
-			//xLabel.SetText(fmt.Sprintf("%d", data.ThAvg))
 
 		})
-
 	})
+
 	monitor.Start() // เริ่ม monitoring
 
 	cpuinfolabel := widget.NewLabel("cpuinfolabel...")   //Overview
@@ -122,11 +114,10 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	cputimeusage := container.NewScroll(
 		container.NewVBox(
+			totalavgLabel,
 			timesLabel,
+			timesStrLabel,
 			meanLabel,
-			timesAVGLabel,
-			yLabel,
-			xLabel,
 		))
 
 	cpu := container.NewAppTabs(
