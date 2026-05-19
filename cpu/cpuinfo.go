@@ -209,11 +209,9 @@ func (m *CPUMonitor) Start() {
 				timesLabel += fmt.Sprintf("	Steal # %d ชั่วโมง %d นาที %d วินาที\n", thSteal, tmSteal, tsSteal)
 				timesLabel += fmt.Sprintf("	Guest # %d ชั่วโมง %d นาที %d วินาที\n", thGuest, tmGuest, tsGuest)
 				timesLabel += fmt.Sprintf("	GuestNice# %d ชั่วโมง %d นาที %d วินาที\n", thGuestNice, tmGuestNice, tsGuestNice)
-
 				fmt.Print(timesLabel)
 
 				//AVG
-
 				thAvg = (thUser + thSystem + thIdle + thNice + thIowait + thIrq + thSoftirq + thSteal + thGuest + thGuestNice) / 10
 				tmAvg = (tmUser + tmSystem + tmIdle + tmNice + tmIowait + tmIrq + tmSoftirq + tmSteal + tmGuest + tmGuestNice) / 10
 				tsAvg = (tsUser + tsSystem + tsIdle + tsNice + tsIowait + tsIrq + tsSoftirq + tsSteal + tsGuest + tsGuestNice) / 10

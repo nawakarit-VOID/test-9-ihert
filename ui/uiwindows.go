@@ -73,9 +73,9 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 		}
 		fyne.Do(func() {
+			yLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))
 			timesAVGLabel.SetText(fmt.Sprintf("%s", data.TimesAVGLabel))
 			//xLabel.SetText(fmt.Sprintf("%d", data.ThAvg))
-			yLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))
 
 		})
 
@@ -125,8 +125,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			timesLabel,
 			meanLabel,
 			timesAVGLabel,
-			xLabel,
 			yLabel,
+			xLabel,
 		))
 
 	cpu := container.NewAppTabs(
