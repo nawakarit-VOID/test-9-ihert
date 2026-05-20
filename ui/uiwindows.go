@@ -20,6 +20,8 @@ func CreateWindow() {
 
 	detail := widget.NewLabel("detail...")
 
+	overviewlabel := widget.NewLabel("Overviewlabel...") //Overview
+
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
 	usagePerCoreLabel := widget.NewLabel("CPU...")
@@ -29,7 +31,6 @@ func CreateWindow() {
 	timesLabel := widget.NewLabel("timesLabel...")
 	meanLabel := widget.NewLabel("meanLabel...")
 
-	cpuinfolabel := widget.NewLabel("cpuinfolabel...")   //Overview
 	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 
 	// สร้าง monitor
@@ -77,18 +78,22 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	monitor.Start() // เริ่ม monitoring
 
-	var cpuinfo string
-	cpuinfo += fmt.Sprintf("CPU : %s\n", dataCPUInfo["modelName"])
-	cpuinfo += fmt.Sprintf("Vendor : %s\n", dataCPUInfo["vendor"])
-	cpuinfo += fmt.Sprintf("Cores : %d\n", dataCPUInfo["physical_cores"])
-	cpuinfo += fmt.Sprintf("Thread : %d\n", dataCPUInfo["logical_cores"])
-	cpuinfo += fmt.Sprintf("FreqMax : %.2f GHz\n", dataCPUInfo["frequency"])
-	cpuinfo += fmt.Sprintf("Family : %s\n", dataCPUInfo["family"])
-	cpuinfo += fmt.Sprintf("Modelid : %s\n", dataCPUInfo["modelid"])
-	cpuinfo += fmt.Sprintf("Stepping : %d\n", dataCPUInfo["steppingversion"])
-	cpuinfo += fmt.Sprintf("Cache : %d MB\n", dataCPUInfo["cacheSizeMB"])
-	cpuinfo += fmt.Sprintf("Microcode : %s\n", dataCPUInfo["microcodeVersion"])
-	cpuinfolabel.SetText(cpuinfo)
+	var overview string
+	overview += fmt.Sprintf("CPU : %s\n", dataCPUInfo["Overview"])
+
+	overview += fmt.Sprintf("Vendor : %s\n", dataCPUInfo["vendor"])
+	overview += fmt.Sprintf("Cores : %d\n", dataCPUInfo["physical_cores"])
+	overview += fmt.Sprintf("Thread : %d\n", dataCPUInfo["logical_cores"])
+	overview += fmt.Sprintf("FreqMax : %.2f GHz\n", dataCPUInfo["frequency"])
+	overview += fmt.Sprintf("Family : %s\n", dataCPUInfo["family"])
+	overview += fmt.Sprintf("Modelid : %s\n", dataCPUInfo["modelid"])
+	overview += fmt.Sprintf("Stepping : %d\n", dataCPUInfo["steppingversion"])
+	overview += fmt.Sprintf("Cache : %d MB\n", dataCPUInfo["cacheSizeMB"])
+	overview += fmt.Sprintf("Microcode : %s\n", dataCPUInfo["microcodeVersion"])
+
+	overview += fmt.Sprintf("X1 : %s\n", dataCPUInfo["X1"])
+
+	overviewlabel.SetText(overview)
 
 	var flagsStr string
 	flagsStr += fmt.Sprintf("%v\n", dataCPUInfo["flagsStr"])
@@ -122,7 +127,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	cpu := container.NewAppTabs(
 		//container.NewTabItem("TEST", container.NewScroll(cputimeuse)),
-		container.NewTabItem("Overview", container.NewScroll(cpuinfolabel)),
+		container.NewTabItem("Overview", container.NewScroll(overviewlabel)),
+
 		container.NewTabItem("Detail", container.NewScroll(detail)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),

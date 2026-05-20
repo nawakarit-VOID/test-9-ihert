@@ -24,8 +24,8 @@ func CPUdata() map[string]interface{} {
 			flagsStr += " "
 		}
 	}
-	var Hyperthreading string
-	Hyperthreading += fmt.Sprintf("Hyperthreading: [ %v ]", logical > physical)
+	//var Hyperthreading string
+	Hyperthreading := fmt.Sprintf("Hyperthreading: [ %v ]", logical > physical)
 
 	var cpuThreadCoreSocketresult string
 	for i, cpu := range info {
@@ -52,21 +52,25 @@ func CPUdata() map[string]interface{} {
 	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
 	cache += fmt.Sprintf("L3 : %d %s\n", c3, xc3)
 
+	var overview string // gopsutil
+	overview += fmt.Sprintf("CPU : %s\n", info[0].ModelName)
+	overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
+	overview += fmt.Sprintf("Cores : %d\n", physical)
+	overview += fmt.Sprintf("Thread : %d\n", logical)
+	overview += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
+	overview += fmt.Sprintf("Family : %s\n", info[0].Family)
+	overview += fmt.Sprintf("Modelid : %s\n", info[0].Model)
+	overview += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
+	overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
+	overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
+
 	return map[string]interface{}{
 		// gopsutil
-		"modelName":                 info[0].ModelName, //ชื่อ cpu
-		"vendor":                    info[0].VendorID,
-		"physical_cores":            physical,
-		"logical_cores":             logical,
-		"frequency":                 info[0].Mhz / 1000,
-		"family":                    info[0].Family,
-		"modelid":                   info[0].Model,
-		"steppingversion":           info[0].Stepping,
-		"cacheSizeMB":               info[0].CacheSize / 1024,
-		"flagsStr":                  flagsStr,
-		"microcodeVersion":          info[0].Microcode,
-		"cpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
+		"Overview": overview,
+		"flagsStr": flagsStr,
+
 		"Hyperthreading":            Hyperthreading,
+		"cpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
 
 		//cpuid
 		"cache": cache,
@@ -78,6 +82,7 @@ func CPUdata() map[string]interface{} {
 		//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 
 	}
+
 }
 
 // ============================================================================
