@@ -78,24 +78,10 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	//var overview string
 	overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))
-	detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["detail"]))
+	detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))
+	flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsStr"]))
 
-	/*
-		var detailLabel string
-		detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["Hyperthreading"])
-		detailLabel += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
-		detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["cpuThreadCoreSocketresult"])
-		//detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
-		//detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
-		//detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
-		//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])
-		detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"]) //cpuid
-		detail.SetText(detailLabel)
-	*/
-	var flagsStr string
-	flagsStr += fmt.Sprintf("%v\n", dataCPUInfo["flagsStr"])
-	flagsStrlabel.SetText(flagsStr)
-
+	//จัดหน้า
 	cpuuse := container.NewScroll(
 		container.NewVBox(
 			//widget.NewCard("CPU Information", "", container.NewVBox(

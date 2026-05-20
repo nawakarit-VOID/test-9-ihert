@@ -44,15 +44,15 @@ func CPUdata() map[string]interface{} {
 
 	// cpuid
 	cpuInfo := cpuid.CPU
-	c1d := cpuInfo.Cache.L1D
-	c1i := cpuInfo.Cache.L1I
-	c2 := cpuInfo.Cache.L2
-	c3 := cpuInfo.Cache.L3
+	//c1d := cpuInfo.Cache.L1D
+	//c1i := cpuInfo.Cache.L1I
+	//c2 := cpuInfo.Cache.L2
+	//c3 := cpuInfo.Cache.L3
 
-	c1d, xc1d := processValue(c1d)
-	c1i, xc1i := processValue(c1i)
-	c2, xc2 := processValue(c2)
-	c3, xc3 := processValue(c3)
+	c1d, xc1d := processValue(cpuInfo.Cache.L1D)
+	c1i, xc1i := processValue(cpuInfo.Cache.L1I)
+	c2, xc2 := processValue(cpuInfo.Cache.L2)
+	c3, xc3 := processValue(cpuInfo.Cache.L3)
 
 	var cache string //cpuid
 	cache += "\n[ Cache ]\n"
@@ -69,7 +69,8 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Flags Feature
 	// ============================================================================
-	flagsStr := ""
+	var flagsStr string
+	//flagsStr := ""
 	for i, flag := range info[0].Flags {
 		flagsStr += flag
 		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
@@ -82,8 +83,8 @@ func CPUdata() map[string]interface{} {
 	return map[string]interface{}{
 		// gopsutil
 		"Overview": overview,
-		"detail":   detail,
-		"flagsStr": flagsStr,
+		"Detail":   detail,
+		"FlagsStr": flagsStr,
 
 		"Hyperthreading":            Hyperthreading,
 		"cpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
