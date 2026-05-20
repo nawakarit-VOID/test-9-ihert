@@ -31,6 +31,8 @@ func CreateWindow() {
 
 	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 
+	xLabel := widget.NewLabel("xLabel...")
+
 	// สร้าง monitor
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 
@@ -76,10 +78,11 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	monitor.Start() // เริ่ม monitoring
 
-	//var overview string
 	overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))
 	detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))
-	flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsStr"]))
+	flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"]))
+
+	//xLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", xxx1.UsageTotal)) // แสดง usage รวม     StCPUData.UsageTotal
 
 	//จัดหน้า
 	cpuuse := container.NewScroll(
@@ -98,7 +101,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 		))
 
 	cpu := container.NewAppTabs(
-		//container.NewTabItem("TEST", container.NewScroll(cputimeuse)),
+		container.NewTabItem("TEST", container.NewScroll(xLabel)),
 		container.NewTabItem("Overview", container.NewScroll(overviewlabel)),
 
 		container.NewTabItem("Detail", container.NewScroll(detailLabel)),

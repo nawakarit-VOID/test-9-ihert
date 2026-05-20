@@ -61,43 +61,36 @@ func CPUdata() map[string]interface{} {
 	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
 	cache += fmt.Sprintf("L3 : %d %s\n", c3, xc3)
 
+	//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
+	//"l1d_cache": cpuInfo.Cache.L1D,
+	//"l1i_cache": cpuInfo.Cache.L1I,
+	//"l2_cache":  cpuInfo.Cache.L2,
+	//"l3_cache":  cpuInfo.Cache.L3,
+	//"has_avx2": cpuInfo.Has(cpuid.AVX2),
+
 	var detail string //
 	detail += Hyperthreading
 	detail += cpuThreadCoreSocketresult
-	detail += cache
+	detail += cache //cpuid
 
 	// ============================================================================
 	// Flags Feature
 	// ============================================================================
-	var flagsStr string
-	//flagsStr := ""
+	var flagsfeature string
 	for i, flag := range info[0].Flags {
-		flagsStr += flag
+		flagsfeature += flag
 		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
-			flagsStr += "\n"
+			flagsfeature += "\n"
 		} else {
-			flagsStr += " "
+			flagsfeature += " "
 		}
 	}
 
 	return map[string]interface{}{
 		// gopsutil
-		"Overview": overview,
-		"Detail":   detail,
-		"FlagsStr": flagsStr,
-
-		"Hyperthreading":            Hyperthreading,
-		"cpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
-
-		//cpuid
-		"cache": cache,
-		//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
-		//"l1d_cache": cpuInfo.Cache.L1D,
-		//"l1i_cache": cpuInfo.Cache.L1I,
-		//"l2_cache":  cpuInfo.Cache.L2,
-		//"l3_cache":  cpuInfo.Cache.L3,
-		//"has_avx2": cpuInfo.Has(cpuid.AVX2),
-
+		"Overview":     overview,
+		"Detail":       detail,
+		"FlagsFeature": flagsfeature,
 	}
 
 }
@@ -117,11 +110,6 @@ type StCPUData struct {
 	TotalavgLabel string
 	//NiceTimes      []float64
 	//IowaitTimes    []float64
-	//IrqTimes       []float64
-	//SoftirqTimes   []float64
-	//StealTimes     []float64
-	//GuestTimes     []float64
-	//GuestNiceTimes []float64
 
 }
 
