@@ -29,6 +29,9 @@ func CreateWindow() {
 	timesLabel := widget.NewLabel("timesLabel...")
 	meanLabel := widget.NewLabel("meanLabel...")
 
+	cpuinfolabel := widget.NewLabel("cpuinfolabel...")   //Overview
+	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
+
 	// สร้าง monitor
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 
@@ -73,9 +76,6 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 	})
 
 	monitor.Start() // เริ่ม monitoring
-
-	cpuinfolabel := widget.NewLabel("cpuinfolabel...")   //Overview
-	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 
 	var cpuinfo string
 	cpuinfo += fmt.Sprintf("CPU : %s\n", dataCPUInfo["modelName"])
