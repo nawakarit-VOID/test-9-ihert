@@ -18,10 +18,8 @@ func CreateWindow() {
 
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 
-	detail := widget.NewLabel("detail...")
-
 	overviewlabel := widget.NewLabel("Overviewlabel...") //Overview
-
+	detailLabel := widget.NewLabel("detailLabel...")
 	//update cpu usage
 	usageTotalLabel := widget.NewLabel("CPU Avg...")
 	usagePerCoreLabel := widget.NewLabel("CPU...")
@@ -78,37 +76,25 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 	monitor.Start() // เริ่ม monitoring
 
-	var overview string
-	overview += fmt.Sprintf("CPU : %s\n", dataCPUInfo["Overview"])
+	//var overview string
+	overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))
+	detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["detail"]))
 
-	overview += fmt.Sprintf("Vendor : %s\n", dataCPUInfo["vendor"])
-	overview += fmt.Sprintf("Cores : %d\n", dataCPUInfo["physical_cores"])
-	overview += fmt.Sprintf("Thread : %d\n", dataCPUInfo["logical_cores"])
-	overview += fmt.Sprintf("FreqMax : %.2f GHz\n", dataCPUInfo["frequency"])
-	overview += fmt.Sprintf("Family : %s\n", dataCPUInfo["family"])
-	overview += fmt.Sprintf("Modelid : %s\n", dataCPUInfo["modelid"])
-	overview += fmt.Sprintf("Stepping : %d\n", dataCPUInfo["steppingversion"])
-	overview += fmt.Sprintf("Cache : %d MB\n", dataCPUInfo["cacheSizeMB"])
-	overview += fmt.Sprintf("Microcode : %s\n", dataCPUInfo["microcodeVersion"])
-
-	overview += fmt.Sprintf("X1 : %s\n", dataCPUInfo["X1"])
-
-	overviewlabel.SetText(overview)
-
+	/*
+		var detailLabel string
+		detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["Hyperthreading"])
+		detailLabel += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
+		detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["cpuThreadCoreSocketresult"])
+		//detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
+		//detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
+		//detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
+		//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])
+		detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"]) //cpuid
+		detail.SetText(detailLabel)
+	*/
 	var flagsStr string
 	flagsStr += fmt.Sprintf("%v\n", dataCPUInfo["flagsStr"])
 	flagsStrlabel.SetText(flagsStr)
-
-	var detailLabel string
-	detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["Hyperthreading"])
-	detailLabel += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
-	detailLabel += fmt.Sprintf("%s\n", dataCPUInfo["cpuThreadCoreSocketresult"])
-	//detailLabel += fmt.Sprintf("Cache\nL1D : %d KB\n", dataCPUInfo["l1d_cache"]) //cpuid
-	//detailLabel += fmt.Sprintf("L1I : %d KB\n", dataCPUInfo["l1i_cache"])        //cpuid
-	//detailLabel += fmt.Sprintf("L2 : %d KB\n", dataCPUInfo["l2_cache"])          //cpuid
-	//detailLabel += fmt.Sprintf("L3 : %d KB\n", dataCPUInfo["l3_cache"])
-	detailLabel += fmt.Sprintf("[ Cache ]\n%s\n", dataCPUInfo["cache"]) //cpuid
-	detail.SetText(detailLabel)
 
 	cpuuse := container.NewScroll(
 		container.NewVBox(
@@ -129,7 +115,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 		//container.NewTabItem("TEST", container.NewScroll(cputimeuse)),
 		container.NewTabItem("Overview", container.NewScroll(overviewlabel)),
 
-		container.NewTabItem("Detail", container.NewScroll(detail)),
+		container.NewTabItem("Detail", container.NewScroll(detailLabel)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		container.NewTabItem("TimeUsage", container.NewScroll(cputimeusage)),

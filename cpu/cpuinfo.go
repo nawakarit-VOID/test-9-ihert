@@ -15,43 +15,9 @@ func CPUdata() map[string]interface{} {
 	logical, _ := cpu.Counts(true)
 	//times, _ := cpu.Times(true)
 
-	flagsStr := ""
-	for i, flag := range info[0].Flags {
-		flagsStr += flag
-		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
-			flagsStr += "\n"
-		} else {
-			flagsStr += " "
-		}
-	}
-	//var Hyperthreading string
-	Hyperthreading := fmt.Sprintf("Hyperthreading: [ %v ]", logical > physical)
-
-	var cpuThreadCoreSocketresult string
-	for i, cpu := range info {
-		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
-			i, cpu.CoreID, cpu.PhysicalID)
-	}
-
-	// cpuid
-	cpuInfo := cpuid.CPU
-
-	c1d := cpuInfo.Cache.L1D
-	c1i := cpuInfo.Cache.L1I
-	c2 := cpuInfo.Cache.L2
-	c3 := cpuInfo.Cache.L3
-
-	c1d, xc1d := processValue(c1d)
-	c1i, xc1i := processValue(c1i)
-	c2, xc2 := processValue(c2)
-	c3, xc3 := processValue(c3)
-
-	var cache string
-	cache += fmt.Sprintf("L1d : %d %s\n", c1d, xc1d)
-	cache += fmt.Sprintf("L1i : %d %s\n", c1i, xc1i)
-	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
-	cache += fmt.Sprintf("L3 : %d %s\n", c3, xc3)
-
+	// ============================================================================
+	// Overview
+	// ============================================================================
 	var overview string // gopsutil
 	overview += fmt.Sprintf("CPU : %s\n", info[0].ModelName)
 	overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
@@ -64,9 +30,59 @@ func CPUdata() map[string]interface{} {
 	overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
 	overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
 
+	// ============================================================================
+	// Detail
+	// ============================================================================
+	Hyperthreading := fmt.Sprintf("Hyperthreading: [ %v ]\n", logical > physical)
+
+	var cpuThreadCoreSocketresult string //จำนวน thread
+	cpuThreadCoreSocketresult += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
+	for i, cpu := range info {
+		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
+			i, cpu.CoreID, cpu.PhysicalID)
+	}
+
+	// cpuid
+	cpuInfo := cpuid.CPU
+	c1d := cpuInfo.Cache.L1D
+	c1i := cpuInfo.Cache.L1I
+	c2 := cpuInfo.Cache.L2
+	c3 := cpuInfo.Cache.L3
+
+	c1d, xc1d := processValue(c1d)
+	c1i, xc1i := processValue(c1i)
+	c2, xc2 := processValue(c2)
+	c3, xc3 := processValue(c3)
+
+	var cache string //cpuid
+	cache += "\n[ Cache ]\n"
+	cache += fmt.Sprintf("L1d : %d %s\n", c1d, xc1d)
+	cache += fmt.Sprintf("L1i : %d %s\n", c1i, xc1i)
+	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
+	cache += fmt.Sprintf("L3 : %d %s\n", c3, xc3)
+
+	var detail string //
+	detail += Hyperthreading
+	detail += cpuThreadCoreSocketresult
+	detail += cache
+
+	// ============================================================================
+	// Flags Feature
+	// ============================================================================
+	flagsStr := ""
+	for i, flag := range info[0].Flags {
+		flagsStr += flag
+		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
+			flagsStr += "\n"
+		} else {
+			flagsStr += " "
+		}
+	}
+
 	return map[string]interface{}{
 		// gopsutil
 		"Overview": overview,
+		"detail":   detail,
 		"flagsStr": flagsStr,
 
 		"Hyperthreading":            Hyperthreading,
