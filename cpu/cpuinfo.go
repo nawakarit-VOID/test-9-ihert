@@ -99,9 +99,10 @@ func CPUdata() map[string]interface{} {
 // monitor
 // ============================================================================
 type StCPUData struct {
-	UsageTotal   float64   // CPU usage รวม
-	UsagePerCore []float64 // CPU usage ต่อ core
-	Times        []cpu.TimesStat
+	UsageTotal     float64   // CPU usage รวม
+	UsagePerCore   []float64 // CPU usage ต่อ core
+	PercentPerCore string
+	Times          []cpu.TimesStat
 	//////////////////////
 	//CpuName        string
 	//UserTimes      []float64 // ค่า User ของแต่ละ CPU
@@ -138,9 +139,9 @@ func (m *CPUMonitor) Start() {
 			// ดึง CPU usage ต่อ core
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
 			// แสดง usage ต่อ core
-			var perCore string = ""
+			var PerCore string
 			for i, pc := range percentPerCore {
-				perCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
+				PerCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
 			}
 
 			//cpu.Times()
@@ -245,9 +246,10 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 			if len(percentTotal) > 0 {
 				data := StCPUData{
-					UsageTotal:   percentTotal[0],
-					UsagePerCore: percentPerCore,
-					Times:        times,
+					UsageTotal: percentTotal[0],
+					//UsagePerCore:    percentPerCore,
+					PercentPerCore: PerCore,
+					Times:          times,
 					//
 					TimesLabel:    timesLabel,
 					TotalavgLabel: totalavgLabel,

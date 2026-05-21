@@ -57,10 +57,12 @@ func CreateWindow() {
 
 		fyne.Do(func() {
 			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal)) // แสดง usage รวม
-			usagePerCoreLabel.SetText(perCoreStr)                                       // แสดง usage ต่อ core
-			timesStrLabel.SetText(timesStr)                                             //cpu.Times rang
-			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel))                //แสดง timeUse Avg all core
-			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))                      //แสดง timeUse all core
+			//usagePerCoreLabel.SetText(perCoreStr)                                       // แสดง usage ต่อ core
+			usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore)) // แสดง usage ต่อ core
+
+			timesStrLabel.SetText(timesStr)                              //cpu.Times rang
+			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel)) //แสดง timeUse Avg all core
+			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))       //แสดง timeUse all core
 			meanLabel.SetText(fmt.Sprintf("%s", data.MeanLabel))
 
 		})
