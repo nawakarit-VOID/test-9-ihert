@@ -36,16 +36,6 @@ func CreateWindow() {
 	// สร้าง monitor
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 
-		/*		fyne.Do(func() {
-					usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal))
-				})
-		*/
-		// แสดง usage ต่อ core
-		var perCoreStr string = ""
-		for i, usage := range data.UsagePerCore {
-			perCoreStr += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, usage)
-		}
-
 		var timesStr string = ""
 		for c, v := range data.Times {
 			//for _, t := range data.Times {
@@ -57,8 +47,7 @@ func CreateWindow() {
 
 		fyne.Do(func() {
 			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal)) // แสดง usage รวม
-			//usagePerCoreLabel.SetText(perCoreStr)                                       // แสดง usage ต่อ core
-			usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore)) // แสดง usage ต่อ core
+			usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore))           // แสดง usage ต่อ core
 
 			timesStrLabel.SetText(timesStr)                              //cpu.Times rang
 			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel)) //แสดง timeUse Avg all core

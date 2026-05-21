@@ -160,13 +160,18 @@ Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
 Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
 
-			var timesLabel string
-			var totalavgLabel string
+			var timesSec string
+			var timesHms string
+			var timesTotalAvg string
 
 			for _, d := range times {
 
 				nCPU := d.CPU
-
+				//วินาที *ดิบ
+				timesSec += fmt.Sprintf(
+					"CPU: [ %s ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
+					nCPU, d.User, d.System, d.Idle, d.Nice, d.Iowait, d.Irq, d.Softirq, d.Steal, d.Guest, d.GuestNice)
+				//แปลงเป็นเวลาสากล
 				thUser, tmUser, tsUser := processTimeS(d.User)
 				thSystem, tmSystem, tsSystem := processTimeS(d.System)
 				thIdle, tmIdle, tsIdle := processTimeS(d.Idle)
@@ -177,20 +182,20 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				thSteal, tmSteal, tsSteal := processTimeS(d.Steal)
 				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
 				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
-
-				timesLabel += fmt.Sprintf("[ %s ]\nUser # [ %dh : %dm : %ds ]\n", nCPU, thUser, tmUser, tsUser)
-				timesLabel += fmt.Sprintf("System # [ %dh : %dm : %ds ]\n", thSystem, tmSystem, tsSystem)
-				timesLabel += fmt.Sprintf("Idle # [ %dh : %dm : %ds ]\n", thIdle, tmIdle, tsIdle)
-				timesLabel += fmt.Sprintf("Nice # [ %dh : %dm : %ds ]\n", thNice, tmNice, tsNice)
-				timesLabel += fmt.Sprintf("Iowait # [ %dh : %dm : %ds ]\n", thIowait, tmIowait, tsIowait)
-				timesLabel += fmt.Sprintf("Irq # [ %dh : %dm : %ds ]\n", thIrq, tmIrq, tsIrq)
-				timesLabel += fmt.Sprintf("Softirq # [ %dh : %dm : %ds ]\n", thSoftirq, tmSoftirq, tsSoftirq)
-				timesLabel += fmt.Sprintf("Steal # [ %dh : %dm : %ds ]\n", thSteal, tmSteal, tsSteal)
-				timesLabel += fmt.Sprintf("Guest # [ %dh : %dm : %ds ]\n", thGuest, tmGuest, tsGuest)
-				timesLabel += fmt.Sprintf("GuestNice # [ %dh : %dm : %ds ]\n\n", thGuestNice, tmGuestNice, tsGuestNice)
+				//จัดเรียง
+				timesHms += fmt.Sprintf("[ %s ]\nUser # [ %dh : %dm : %ds ]\n", nCPU, thUser, tmUser, tsUser)
+				timesHms += fmt.Sprintf("System # [ %dh : %dm : %ds ]\n", thSystem, tmSystem, tsSystem)
+				timesHms += fmt.Sprintf("Idle # [ %dh : %dm : %ds ]\n", thIdle, tmIdle, tsIdle)
+				timesHms += fmt.Sprintf("Nice # [ %dh : %dm : %ds ]\n", thNice, tmNice, tsNice)
+				timesHms += fmt.Sprintf("Iowait # [ %dh : %dm : %ds ]\n", thIowait, tmIowait, tsIowait)
+				timesHms += fmt.Sprintf("Irq # [ %dh : %dm : %ds ]\n", thIrq, tmIrq, tsIrq)
+				timesHms += fmt.Sprintf("Softirq # [ %dh : %dm : %ds ]\n", thSoftirq, tmSoftirq, tsSoftirq)
+				timesHms += fmt.Sprintf("Steal # [ %dh : %dm : %ds ]\n", thSteal, tmSteal, tsSteal)
+				timesHms += fmt.Sprintf("Guest # [ %dh : %dm : %ds ]\n", thGuest, tmGuest, tsGuest)
+				timesHms += fmt.Sprintf("GuestNice # [ %dh : %dm : %ds ]\n\n", thGuestNice, tmGuestNice, tsGuestNice)
 				//fmt.Print(timesLabel)
 
-				//AVG//
+				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
 				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
 				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
@@ -239,7 +244,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					tsavg = float64(tssumAvg) / float64(tsvalidCount)
 				}
 
-				totalavgLabel += fmt.Sprintf("[ %s ] เฉลี่ย [ %.fh : %.fm : %.fs ]\n", nCPU, thavg, tmavg, tsavg)
+				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.fh : %.fm : %.fs ]\n", nCPU, thavg, tmavg, tsavg)
 				//fmt.Print(totalavgLabel)
 
 			}
@@ -251,8 +256,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					PercentPerCore: PerCore,
 					Times:          times,
 					//
-					TimesLabel:    timesLabel,
-					TotalavgLabel: totalavgLabel,
+					TimesLabel:    timesHms,
+					TotalavgLabel: timesTotalAvg,
 					MeanLabel:     meanLabel,
 				}
 				m.callback(data)
