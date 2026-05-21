@@ -16,40 +16,36 @@ func CreateWindow() {
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
+	//cpu
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
-
+	//sub cpu
 	overviewlabel := widget.NewLabel("Overviewlabel...") //Overview
 	detailLabel := widget.NewLabel("detailLabel...")
-	//update cpu usage
-	usageTotalLabel := widget.NewLabel("CPU Avg...")
-	usagePerCoreLabel := widget.NewLabel("CPU...")
-	totalavgLabel := widget.NewLabel("TotalavgLabel...")
+	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
+	usageLabel := widget.NewLabel("usageLabel...")
 
+	totalavgLabel := widget.NewLabel("TotalavgLabel...")
 	timesStrLabel := widget.NewLabel("timestimesStrLabel...")
 	timesLabel := widget.NewLabel("timesLabel...")
 	meanLabel := widget.NewLabel("meanLabel...")
 
-	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
-
 	xLabel := widget.NewLabel("xLabel...")
 
-	// สร้าง monitor
+	//รับ cpu
+	fyne.Do(func() {
+		overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))     //1
+		detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))         //2
+		flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"])) //3
+	})
+
+	// สร้าง monitor cpu
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 
-		var timesStr string = ""
-		for c, v := range data.Times {
-			//for _, t := range data.Times {
-			timesStr += fmt.Sprintf(
-				"CPU: [ %d ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
-				c, v.User, v.System, v.Idle, v.Nice, v.Iowait, v.Irq, v.Softirq, v.Steal, v.Guest, v.GuestNice)
-
-		}
-
 		fyne.Do(func() {
-			usageTotalLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", data.UsageTotal)) // แสดง usage รวม
-			usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore))           // แสดง usage ต่อ core
+			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) // แสดง usage รวม //4
 
-			timesStrLabel.SetText(timesStr)                              //cpu.Times rang
+			//usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore)) // แสดง usage ต่อ core
+
 			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel)) //แสดง timeUse Avg all core
 			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))       //แสดง timeUse all core
 			meanLabel.SetText(fmt.Sprintf("%s", data.MeanLabel))
@@ -59,18 +55,11 @@ func CreateWindow() {
 
 	monitor.Start() // เริ่ม monitoring
 
-	overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))
-	detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))
-	flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"]))
-
-	//xLabel.SetText(fmt.Sprintf("Usage Avg : %.2f%%", xxx1.UsageTotal)) // แสดง usage รวม     StCPUData.UsageTotal
-
 	//จัดหน้า
 	cpuuse := container.NewScroll(
 		container.NewVBox(
 			//widget.NewCard("CPU Information", "", container.NewVBox(
-			usageTotalLabel,
-			usagePerCoreLabel,
+			usageLabel,
 		))
 
 	cputimeusage := container.NewScroll(

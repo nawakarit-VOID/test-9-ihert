@@ -99,7 +99,8 @@ func CPUdata() map[string]interface{} {
 // monitor
 // ============================================================================
 type StCPUData struct {
-	UsageTotal     float64   // CPU usage รวม
+	Usage string //
+
 	UsagePerCore   []float64 // CPU usage ต่อ core
 	PercentPerCore string
 	Times          []cpu.TimesStat
@@ -248,13 +249,19 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				//fmt.Print(totalavgLabel)
 
 			}
+			//รวม
+			var usage string
+			usage += fmt.Sprintf("Usage Avg : %.2f\n\n", percentTotal[0])
+			usage += fmt.Sprintf("%s\n", PerCore)
+
+			//var timesUsage string
 
 			if len(percentTotal) > 0 {
 				data := StCPUData{
-					UsageTotal: percentTotal[0],
+					Usage: usage,
 					//UsagePerCore:    percentPerCore,
-					PercentPerCore: PerCore,
-					Times:          times,
+					//PercentPerCore: PerCore,
+					Times: times,
 					//
 					TimesLabel:    timesHms,
 					TotalavgLabel: timesTotalAvg,
