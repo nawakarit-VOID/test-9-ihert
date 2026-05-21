@@ -108,6 +108,7 @@ type StCPUData struct {
 	//SystemTimes    []float64 // ค่า System ของแต่ละ CPU
 	TimesLabel    string
 	TotalavgLabel string
+	MeanLabel     string
 	//NiceTimes      []float64
 	//IowaitTimes    []float64
 
@@ -130,14 +131,34 @@ func NewCPUMonitor(interval time.Duration, callback func(StCPUData)) *CPUMonitor
 func (m *CPUMonitor) Start() {
 	go func() {
 		for range m.ticker.C {
+
 			// ดึง CPU usage รวม
 			percentTotal, _ := cpu.Percent(100*time.Millisecond, false)
+
 			// ดึง CPU usage ต่อ core
 			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
+			// แสดง usage ต่อ core
+			var perCore string = ""
+			for i, pc := range percentPerCore {
+				perCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
+			}
+
 			//cpu.Times()
 			times, _ := cpu.Times(true)
 
 			//cpuData := StCPUData{}
+			meanLabel := `***
+User : โปรแกรมของผู้ใช้
+System : ระบบ
+Idle : ไม่ได้ทำอะไร
+Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
+Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
+Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
+Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
+Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
+Guest : เวลาที่ CPU ใช้งาน guest virtual machine
+GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
+
 			var timesLabel string
 			var totalavgLabel string
 
@@ -156,16 +177,16 @@ func (m *CPUMonitor) Start() {
 				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
 				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
 
-				timesLabel += fmt.Sprintf("[ %s ]\n	User # [ %dh : %dm : %ds ]\n", nCPU, thUser, tmUser, tsUser)
-				timesLabel += fmt.Sprintf("	System # [ %dh : %dm : %ds ]\n", thSystem, tmSystem, tsSystem)
-				timesLabel += fmt.Sprintf("	Idle # [ %dh : %dm : %ds ]\n", thIdle, tmIdle, tsIdle)
-				timesLabel += fmt.Sprintf("	Nice # [ %dh : %dm : %ds ]\n", thNice, tmNice, tsNice)
-				timesLabel += fmt.Sprintf("	Iowait # [ %dh : %dm : %ds ]\n", thIowait, tmIowait, tsIowait)
-				timesLabel += fmt.Sprintf("	Irq # [ %dh : %dm : %ds ]\n", thIrq, tmIrq, tsIrq)
-				timesLabel += fmt.Sprintf("	Softirq # [ %dh : %dm : %ds ]\n", thSoftirq, tmSoftirq, tsSoftirq)
-				timesLabel += fmt.Sprintf("	Steal # [ %dh : %dm : %ds ]\n", thSteal, tmSteal, tsSteal)
-				timesLabel += fmt.Sprintf("	Guest # [ %dh : %dm : %ds ]\n", thGuest, tmGuest, tsGuest)
-				timesLabel += fmt.Sprintf("	GuestNice # [ %dh : %dm : %ds ]\n", thGuestNice, tmGuestNice, tsGuestNice)
+				timesLabel += fmt.Sprintf("[ %s ]\nUser # [ %dh : %dm : %ds ]\n", nCPU, thUser, tmUser, tsUser)
+				timesLabel += fmt.Sprintf("System # [ %dh : %dm : %ds ]\n", thSystem, tmSystem, tsSystem)
+				timesLabel += fmt.Sprintf("Idle # [ %dh : %dm : %ds ]\n", thIdle, tmIdle, tsIdle)
+				timesLabel += fmt.Sprintf("Nice # [ %dh : %dm : %ds ]\n", thNice, tmNice, tsNice)
+				timesLabel += fmt.Sprintf("Iowait # [ %dh : %dm : %ds ]\n", thIowait, tmIowait, tsIowait)
+				timesLabel += fmt.Sprintf("Irq # [ %dh : %dm : %ds ]\n", thIrq, tmIrq, tsIrq)
+				timesLabel += fmt.Sprintf("Softirq # [ %dh : %dm : %ds ]\n", thSoftirq, tmSoftirq, tsSoftirq)
+				timesLabel += fmt.Sprintf("Steal # [ %dh : %dm : %ds ]\n", thSteal, tmSteal, tsSteal)
+				timesLabel += fmt.Sprintf("Guest # [ %dh : %dm : %ds ]\n", thGuest, tmGuest, tsGuest)
+				timesLabel += fmt.Sprintf("GuestNice # [ %dh : %dm : %ds ]\n\n", thGuestNice, tmGuestNice, tsGuestNice)
 				//fmt.Print(timesLabel)
 
 				//AVG//
@@ -230,6 +251,7 @@ func (m *CPUMonitor) Start() {
 					//
 					TimesLabel:    timesLabel,
 					TotalavgLabel: totalavgLabel,
+					MeanLabel:     meanLabel,
 				}
 				m.callback(data)
 			}

@@ -61,17 +61,7 @@ func CreateWindow() {
 			timesStrLabel.SetText(timesStr)                                             //cpu.Times rang
 			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel))                //แสดง timeUse Avg all core
 			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))                      //แสดง timeUse all core
-			meanLabel.SetText(fmt.Sprintln(`***
-User : โปรแกรมของผู้ใช้
-System : ระบบ
-Idle : ไม่ได้ทำอะไร
-Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
-Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
-Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
-Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
-Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
-Guest : เวลาที่ CPU ใช้งาน guest virtual machine
-GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`))
+			meanLabel.SetText(fmt.Sprintf("%s", data.MeanLabel))
 
 		})
 	})
