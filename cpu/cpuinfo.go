@@ -214,7 +214,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				//tsvalidCount := 0
 
 				/*thsumAvg, thvalidCount, */
-				thavg := numSumAndCount(thAvgscores)
+				//			 sum, count := numSumAndCount(d.User)
+				//thavg := numSumAndCount(d.User)
 				//tmavg := numSumAndCount(tmAvgscores)
 				//tsavg := numSumAndCount(tsAvgscores)
 				/*
@@ -239,6 +240,14 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 						}
 					}
 				*/
+				//thsum, thcount := numSumAndCount(thAvgscores)
+				_, _, avg := numSumAndCount(thAvgscores) //ok
+
+				/*		var thavg float64
+						if count > 0 {
+							thavg = float64(thsum) / float64(thcount)
+						}
+				*/
 				/*
 					// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
 					// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
@@ -258,7 +267,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				*/
 
 				//timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /*tmavg, tsavg*/)
-				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /* tmavg, tsavg*/)
+				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : :]\n", nCPU, avg /* tmavg, tsavg*/)
 				//fmt.Print(timesTotalAvg)
 
 			}
@@ -320,12 +329,24 @@ var remainingSeconds int
 var minutes int
 var seconds int
 
+var sum1 int = 0
+var count1 int = 0
+var avg1 float64
+var valueRang int
+
 func processTimeS(value float64) (int, int, int) {
 
 	hours = int(value) / 3600            // หาชั่วโมง  (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ) *หารไม่เอาเศษ
 	remainingSeconds = int(value) % 3600 //หาเศษวินาทีที่เหลือ *% หารเพื่อเอาเศษ
 	minutes = remainingSeconds / 60      //  นำเศษที่เหลือมาหาหน่วยนาที *แบบไม่เอาเศษและวินาทีสุดท้าย
 	seconds = remainingSeconds % 60      //และวินาทีสุดท้าย *หารเอาเศษ
+
+	println(value)
+
+	for valueRang := range int(value) {
+		valueRang += valueRang
+
+	}
 
 	return hours, minutes, seconds
 }
@@ -337,20 +358,25 @@ var sum int = 0
 var count int = 0
 var avg float64
 
-func numSumAndCount(value []int) /*int, int,*/ float64 {
-	go func() {
+func numSumAndCount(value []int) /*int, int,*/ (int, int, float64) {
 
-		for _, score := range value {
-			sum += score
-			if score > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-				count++
-			}
-			// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
-			// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
-			if count > 0 {
-				avg = float64(sum) / float64(count)
-			}
+	for _, x := range value {
+		sum += x
+		if x > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+			count++
 		}
-	}()
-	return /*sum, count,*/ avg
+	}
+	if count > 0 {
+		avg = float64(sum) / float64(count)
+	}
+
+	return sum, count, avg
 }
+
+/*
+	// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
+	// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
+	if count > 0 {
+		avg = float64(sum) / float64(count)
+	}
+*/
