@@ -198,55 +198,68 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
-				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
-				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
+				//tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
+				//tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
 
-				thsumAvg := 0
-				tmsumAvg := 0
-				tssumAvg := 0
+				//	thidleAvgscores := []int{}
+				//	tmidleAvgscores := []int{}
+				//	tsidleAvgscores := []int{}
 
-				thvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
-				tmvalidCount := 0
-				tsvalidCount := 0
+				//thsumAvg := 0
+				//tmsumAvg := 0
+				//tssumAvg := 0
 
-				for _, thscore := range thAvgscores {
-					thsumAvg += thscore
-					if thscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-						thvalidCount++
+				//thvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
+				//tmvalidCount := 0
+				//tsvalidCount := 0
+
+				/*thsumAvg, thvalidCount, */
+				thavg := numSumAndCount(thAvgscores)
+				//tmavg := numSumAndCount(tmAvgscores)
+				//tsavg := numSumAndCount(tsAvgscores)
+				/*
+					for _, thscore := range thAvgscores {
+						thsumAvg += thscore
+						if thscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+							thvalidCount++
+						}
 					}
-				}
 
-				for _, tmscore := range tmAvgscores {
-					tmsumAvg += tmscore
-					if tmscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-						tmvalidCount++
+					for _, tmscore := range tmAvgscores {
+						tmsumAvg += tmscore
+						if tmscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+							tmvalidCount++
+						}
 					}
-				}
 
-				for _, tsscore := range tsAvgscores {
-					tssumAvg += tsscore
-					if tsscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-						tsvalidCount++
+					for _, tsscore := range tsAvgscores {
+						tssumAvg += tsscore
+						if tsscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+							tsvalidCount++
+						}
 					}
-				}
+				*/
+				/*
+					// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
+					// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
+					var thavg float64
+					if thvalidCount > 0 {
+						thavg = float64(thsumAvg) / float64(thvalidCount)
+					}
 
-				// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
-				// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
-				var thavg float64
-				if thvalidCount > 0 {
-					thavg = float64(thsumAvg) / float64(thvalidCount)
-				}
-				var tmavg float64
-				if tmvalidCount > 0 {
-					tmavg = float64(tmsumAvg) / float64(tmvalidCount)
-				}
-				var tsavg float64
-				if tsvalidCount > 0 {
-					tsavg = float64(tssumAvg) / float64(tsvalidCount)
-				}
+					var tmavg float64
+					if tmvalidCount > 0 {
+						tmavg = float64(tmsumAvg) / float64(tmvalidCount)
+					}
+					var tsavg float64
+					if tsvalidCount > 0 {
+						tsavg = float64(tssumAvg) / float64(tsvalidCount)
+					}
+				*/
 
-				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg, tmavg, tsavg)
-				//fmt.Print(totalavgLabel)
+				//timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /*tmavg, tsavg*/)
+				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /* tmavg, tsavg*/)
+				//fmt.Print(timesTotalAvg)
 
 			}
 			//รวม timesusage
@@ -320,3 +333,24 @@ func processTimeS(value float64) (int, int, int) {
 // ============================================================================
 // SECTION_NAME
 // ============================================================================
+var sum int = 0
+var count int = 0
+var avg float64
+
+func numSumAndCount(value []int) /*int, int,*/ float64 {
+	go func() {
+
+		for _, score := range value {
+			sum += score
+			if score > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
+				count++
+			}
+			// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
+			// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
+			if count > 0 {
+				avg = float64(sum) / float64(count)
+			}
+		}
+	}()
+	return /*sum, count,*/ avg
+}
