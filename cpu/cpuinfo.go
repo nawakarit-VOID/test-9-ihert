@@ -173,6 +173,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 				//แปลงเป็นเวลาสากล
 				thUser, tmUser, tsUser := processTimeS(d.User)
+				//fmt.Println(d.User)
 				thSystem, tmSystem, tsSystem := processTimeS(d.System)
 				thIdle, tmIdle, tsIdle := processTimeS(d.Idle)
 				thNice, tmNice, tsNice := processTimeS(d.Nice)
@@ -198,8 +199,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
-				//tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
-				//tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
+				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
+				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
 
 				//	thidleAvgscores := []int{}
 				//	tmidleAvgscores := []int{}
@@ -241,7 +242,13 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					}
 				*/
 				//thsum, thcount := numSumAndCount(thAvgscores)
-				_, _, avg := numSumAndCount(thAvgscores) //ok
+				thsum, thavg := numSumAndCount(thAvgscores) //ok
+				tmsum, tmavg := numSumAndCount(tmAvgscores)
+				tssum, tsavg := numSumAndCount(tsAvgscores)
+
+				thAvg := Avg(thsum, thavg)
+				tmAvg := Avg(tmsum, tmavg)
+				tsAvg := Avg(tssum, tsavg)
 
 				/*		var thavg float64
 						if count > 0 {
@@ -267,7 +274,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				*/
 
 				//timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /*tmavg, tsavg*/)
-				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : :]\n", nCPU, avg /* tmavg, tsavg*/)
+				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thAvg, tmAvg, tsAvg)
 				//fmt.Print(timesTotalAvg)
 
 			}
@@ -333,6 +340,7 @@ var sum1 int = 0
 var count1 int = 0
 var avg1 float64
 var valueRang int
+var i int
 
 func processTimeS(value float64) (int, int, int) {
 
@@ -341,7 +349,9 @@ func processTimeS(value float64) (int, int, int) {
 	minutes = remainingSeconds / 60      //  นำเศษที่เหลือมาหาหน่วยนาที *แบบไม่เอาเศษและวินาทีสุดท้าย
 	seconds = remainingSeconds % 60      //และวินาทีสุดท้าย *หารเอาเศษ
 
-	println(value)
+	//println(value)
+	value += value
+	//println(value)
 
 	for valueRang := range int(value) {
 		valueRang += valueRang
@@ -356,9 +366,8 @@ func processTimeS(value float64) (int, int, int) {
 // ============================================================================
 var sum int = 0
 var count int = 0
-var avg float64
 
-func numSumAndCount(value []int) /*int, int,*/ (int, int, float64) {
+func numSumAndCount(value []int) (int, int) {
 
 	for _, x := range value {
 		sum += x
@@ -366,11 +375,19 @@ func numSumAndCount(value []int) /*int, int,*/ (int, int, float64) {
 			count++
 		}
 	}
-	if count > 0 {
-		avg = float64(sum) / float64(count)
-	}
 
-	return sum, count, avg
+	return sum, count
+}
+
+var avg float64
+
+func Avg(valuex int, valuey int) float64 {
+	for {
+		if valuey > 0 {
+			avg = float64(valuex) / float64(valuey)
+			return avg
+		}
+	}
 }
 
 /*
