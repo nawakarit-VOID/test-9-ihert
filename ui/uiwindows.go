@@ -23,13 +23,13 @@ func CreateWindow() {
 	detailLabel := widget.NewLabel("detailLabel...")
 	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 	usageLabel := widget.NewLabel("usageLabel...")
+	TimesusageLabel := widget.NewLabel("TimesusageLabel...")
 
-	totalavgLabel := widget.NewLabel("TotalavgLabel...")
-	timesStrLabel := widget.NewLabel("timestimesStrLabel...")
-	timesLabel := widget.NewLabel("timesLabel...")
-	meanLabel := widget.NewLabel("meanLabel...")
+	//timesStrLabel := widget.NewLabel("timestimesStrLabel...")
+	//timesLabel := widget.NewLabel("timesLabel...")
+	//meanLabel := widget.NewLabel("meanLabel...")
 
-	xLabel := widget.NewLabel("xLabel...")
+	//xLabel := widget.NewLabel("xLabel...")
 
 	//รับ cpu
 	fyne.Do(func() {
@@ -40,19 +40,11 @@ func CreateWindow() {
 
 	// สร้าง monitor cpu
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
-
 		fyne.Do(func() {
-			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) // แสดง usage รวม //4
-
-			//usagePerCoreLabel.SetText(fmt.Sprintf("%s", data.PercentPerCore)) // แสดง usage ต่อ core
-
-			totalavgLabel.SetText(fmt.Sprintf("%s", data.TotalavgLabel)) //แสดง timeUse Avg all core
-			timesLabel.SetText(fmt.Sprintf("%s", data.TimesLabel))       //แสดง timeUse all core
-			meanLabel.SetText(fmt.Sprintf("%s", data.MeanLabel))
-
+			usageLabel.SetText(fmt.Sprintf("%s", data.Usage))           //4 // แสดง usage รวม
+			TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5
 		})
 	})
-
 	monitor.Start() // เริ่ม monitoring
 
 	//จัดหน้า
@@ -64,16 +56,12 @@ func CreateWindow() {
 
 	cputimeusage := container.NewScroll(
 		container.NewVBox(
-			totalavgLabel,
-			timesLabel,
-			timesStrLabel,
-			meanLabel,
+			TimesusageLabel,
 		))
 
 	cpu := container.NewAppTabs(
-		container.NewTabItem("TEST", container.NewScroll(xLabel)),
+		//container.NewTabItem("TEST", container.NewScroll(xLabel)),
 		container.NewTabItem("Overview", container.NewScroll(overviewlabel)),
-
 		container.NewTabItem("Detail", container.NewScroll(detailLabel)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
