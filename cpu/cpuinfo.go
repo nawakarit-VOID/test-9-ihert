@@ -106,9 +106,7 @@ type StCPUData struct {
 	PercentPerCore string
 	Times          []cpu.TimesStat
 	//////////////////////
-
 }
-
 type CPUMonitor struct {
 	ticker   *time.Ticker
 	callback func(StCPUData)
@@ -123,7 +121,7 @@ func NewCPUMonitor(interval time.Duration, callback func(StCPUData)) *CPUMonitor
 }
 
 // เริ่ม monitoring
-func (m *CPUMonitor) Run() {
+func (m *CPUMonitor) Start() {
 	go func() {
 		for range m.ticker.C {
 
@@ -137,7 +135,6 @@ func (m *CPUMonitor) Run() {
 			for i, pc := range percentPerCore {
 				PerCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
 			}
-
 			//รวม usage
 			var usage string
 			usage += fmt.Sprintf("Usage Avg : %.2f\n\n", percentTotal[0])
@@ -195,7 +192,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				timesHms += fmt.Sprintf("Steal # [ %d : %d : %d ]\n", thSteal, tmSteal, tsSteal)
 				timesHms += fmt.Sprintf("Guest # [ %d : %d : %d ]\n", thGuest, tmGuest, tsGuest)
 				timesHms += fmt.Sprintf("GuestNice # [ %d : %d : %d ]\n", thGuestNice, tmGuestNice, tsGuestNice)
-				fmt.Print(timesHms)
+				//fmt.Print(timesHms)
 
 				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
@@ -284,10 +281,13 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			timesusage += timesHms
 			timesusage += timesTotalAvg
 			timesusage += meanLabel
-
+			var x string
+			x += "sssss"
 			if len(percentTotal) > 0 {
+
 				data := StCPUData{
-					Usage:      usage,
+					Usage: x,
+					//Usage:      usage,
 					Timesusage: timesusage,
 				}
 				m.callback(data)
