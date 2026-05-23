@@ -126,10 +126,16 @@ func (m *CPUMonitor) Start() {
 		for range m.ticker.C {
 
 			// ดึง CPU usage รวม
-			percentTotal, _ := cpu.Percent(100*time.Millisecond, false)
+			percentTotal, err := cpu.Percent(100*time.Millisecond, false)
+			if err != nil || len(percentTotal) == 0 {
+				continue
+			}
 
 			// ดึง CPU usage ต่อ core
-			percentPerCore, _ := cpu.Percent(100*time.Millisecond, true)
+			percentPerCore, err := cpu.Percent(100*time.Millisecond, true)
+			if err != nil {
+				continue
+			}
 			// แสดง usage ต่อ core
 			var PerCore string
 			for i, pc := range percentPerCore {
@@ -141,7 +147,10 @@ func (m *CPUMonitor) Start() {
 			usage += fmt.Sprintf("%s\n", PerCore)
 
 			//cpu.Times()
-			times, _ := cpu.Times(true)
+			times, err := cpu.Times(true)
+			if err != nil || len(times) == 0 {
+				continue
+			}
 
 			var timesSec string
 			timesSec += "[ ข้อมูลดิบ ]\n\n"
@@ -281,15 +290,11 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			timesusage += timesHms
 			timesusage += timesTotalAvg
 			timesusage += meanLabel
-			var x string
-			x += "sssss"
 			if len(percentTotal) > 0 {
 
 				data := StCPUData{
-					Usage: x,
-					//Usage:      usage,
-					Timesusage:   timesusage,
-					UsagePerCore: percentPerCore,
+					Usage:      usage,
+					Timesusage: timesusage,
 				}
 				m.callback(data)
 			}
@@ -309,22 +314,17 @@ func processValue(value int) (int, string) {
 	case value >= 1099511627776:
 		value = value / 1099511627776
 		x = "TB"
-		//fmt.Printf("%d %s\n", value, v)
 	case value >= 1073741824:
 		value = value / 1073741824
 		x = "GB"
-		//fmt.Printf("%d %s\n", value, v)
 	case value >= 1048576:
 		value = value / 1048576
 		x = "MB"
-		//fmt.Printf("%d %s\n", value, v)
 	case value >= 1000:
 		value = value / 1024
 		x = "KB"
-		//fmt.Printf("%d %s\n", value, v)
 	default:
 		x = "B"
-		//fmt.Printf("%d %s\n", value, v)
 	}
 	return value, x
 }
@@ -332,32 +332,13 @@ func processValue(value int) (int, string) {
 // ============================================================================
 // เวลา
 // ============================================================================
-var hours int
-var remainingSeconds int
-var minutes int
-var seconds int
-
-var sum1 int = 0
-var count1 int = 0
-var avg1 float64
-var valueRang int
-var i int
 
 func processTimeS(value float64) (int, int, int) {
 
-	hours = int(value) / 3600            // หาชั่วโมง  (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ) *หารไม่เอาเศษ
-	remainingSeconds = int(value) % 3600 //หาเศษวินาทีที่เหลือ *% หารเพื่อเอาเศษ
-	minutes = remainingSeconds / 60      //  นำเศษที่เหลือมาหาหน่วยนาที *แบบไม่เอาเศษและวินาทีสุดท้าย
-	seconds = remainingSeconds % 60      //และวินาทีสุดท้าย *หารเอาเศษ
-
-	//println(value)
-	value += value
-	//println(value)
-
-	for valueRang := range int(value) {
-		valueRang += valueRang
-
-	}
+	hours := int(value) / 3600            // หาชั่วโมง  (int หาร int จะเป็นการหารไม่เอาเศษโดยอัตโนมัติ) *หารไม่เอาเศษ
+	remainingSeconds := int(value) % 3600 //หาเศษวินาทีที่เหลือ *% หารเพื่อเอาเศษ
+	minutes := remainingSeconds / 60      //  นำเศษที่เหลือมาหาหน่วยนาที *แบบไม่เอาเศษและวินาทีสุดท้าย
+	seconds := remainingSeconds % 60      //และวินาทีสุดท้าย *หารเอาเศษ
 
 	return hours, minutes, seconds
 }
@@ -365,10 +346,9 @@ func processTimeS(value float64) (int, int, int) {
 // ============================================================================
 // SECTION_NAME
 // ============================================================================
-var sum int = 0
-var count int = 0
-
 func numSumAndCount(value []int) (int, int) {
+	sum := 0
+	count := 0
 
 	for _, x := range value {
 		sum += x
@@ -380,15 +360,11 @@ func numSumAndCount(value []int) (int, int) {
 	return sum, count
 }
 
-var avg float64
-
 func Avg(valuex int, valuey int) float64 {
-	for {
-		if valuey > 0 {
-			avg = float64(valuex) / float64(valuey)
-			return avg
-		}
+	if valuey > 0 {
+		return float64(valuex) / float64(valuey)
 	}
+	return 0
 }
 
 /*
