@@ -13,6 +13,7 @@ import (
 )
 
 func CreateWindow() {
+
 	a := app.New()
 	w := a.NewWindow("CPU Info")
 
@@ -45,7 +46,7 @@ func CreateWindow() {
 			TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5
 		})
 	})
-	monitor.Start() // เริ่ม monitoring
+	monitor.Run() // เริ่ม monitoring
 
 	//จัดหน้า
 	cpuuse := container.NewScroll(

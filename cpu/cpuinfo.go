@@ -123,7 +123,7 @@ func NewCPUMonitor(interval time.Duration, callback func(StCPUData)) *CPUMonitor
 }
 
 // เริ่ม monitoring
-func (m *CPUMonitor) Start() {
+func (m *CPUMonitor) Run() {
 	go func() {
 		for range m.ticker.C {
 
@@ -195,7 +195,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				timesHms += fmt.Sprintf("Steal # [ %d : %d : %d ]\n", thSteal, tmSteal, tsSteal)
 				timesHms += fmt.Sprintf("Guest # [ %d : %d : %d ]\n", thGuest, tmGuest, tsGuest)
 				timesHms += fmt.Sprintf("GuestNice # [ %d : %d : %d ]\n", thGuestNice, tmGuestNice, tsGuestNice)
-				//fmt.Print(timesLabel)
+				fmt.Print(timesHms)
 
 				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
