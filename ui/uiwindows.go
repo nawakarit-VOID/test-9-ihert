@@ -38,13 +38,15 @@ func CreateWindow() {
 		detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))         //2
 		flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"])) //3
 	})
-
 	// สร้าง monitor cpu
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 		fyne.Do(func() {
-			usageLabel.SetText(fmt.Sprintf("%s", data.Usage))           //4 // แสดง usage รวม
-			TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5
+			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) //4 // แสดง usage รวม
+			//TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5
+			TimesusageLabel.SetText(fmt.Sprintf("%.2f", data.UsagePerCore)) //5
+
 		})
+
 	})
 	monitor.Start() // เริ่ม monitoring
 

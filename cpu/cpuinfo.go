@@ -288,7 +288,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				data := StCPUData{
 					Usage: x,
 					//Usage:      usage,
-					Timesusage: timesusage,
+					Timesusage:   timesusage,
+					UsagePerCore: percentPerCore,
 				}
 				m.callback(data)
 			}
