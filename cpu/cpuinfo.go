@@ -155,7 +155,7 @@ func (m *CPUMonitor) Start() {
 			var timesSec string
 			timesSec += "[ ข้อมูลดิบ ]\n\n"
 			var timesHms string
-			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n"
+			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
 			var timesTotalAvg string
 			timesTotalAvg += "\n[ เฉลี่ย ]\n\n"
 			meanLabel := "\n[ ความหมาย ]\n\n" + `User : โปรแกรมของผู้ใช้
@@ -169,12 +169,16 @@ Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
 Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
 
+			var totalIdle float64
+
 			for _, d := range times {
+
+				totalIdle += d.Idle //รวม idle
 
 				nCPU := d.CPU
 				//วินาที *ดิบ
 				timesSec += fmt.Sprintf(
-					"CPU: [ %s ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
+					"[ %s ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
 					nCPU, d.User, d.System, d.Idle, d.Nice, d.Iowait, d.Irq, d.Softirq, d.Steal, d.Guest, d.GuestNice)
 
 				//แปลงเป็นเวลาสากล
@@ -189,19 +193,11 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				thSteal, tmSteal, tsSteal := processTimeS(d.Steal)
 				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
 				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
-				//จัดเรียง
 
-				timesHms += fmt.Sprintf("\n[ %s ]\nUser # [ %d : %d : %d ]\n", nCPU, thUser, tmUser, tsUser)
-				timesHms += fmt.Sprintf("System # [ %d : %d : %d ]\n", thSystem, tmSystem, tsSystem)
-				timesHms += fmt.Sprintf("Idle # [ %d : %d : %d ]\n", thIdle, tmIdle, tsIdle)
-				timesHms += fmt.Sprintf("Nice # [ %d : %d : %d ]\n", thNice, tmNice, tsNice)
-				timesHms += fmt.Sprintf("Iowait # [ %d : %d : %d ]\n", thIowait, tmIowait, tsIowait)
-				timesHms += fmt.Sprintf("Irq # [ %d : %d : %d ]\n", thIrq, tmIrq, tsIrq)
-				timesHms += fmt.Sprintf("Softirq # [ %d : %d : %d ]\n", thSoftirq, tmSoftirq, tsSoftirq)
-				timesHms += fmt.Sprintf("Steal # [ %d : %d : %d ]\n", thSteal, tmSteal, tsSteal)
-				timesHms += fmt.Sprintf("Guest # [ %d : %d : %d ]\n", thGuest, tmGuest, tsGuest)
-				timesHms += fmt.Sprintf("GuestNice # [ %d : %d : %d ]\n", thGuestNice, tmGuestNice, tsGuestNice)
-				//fmt.Print(timesHms)
+				//จัดเรียง
+				timesHms += fmt.Sprintf(
+					"[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					nCPU, thUser, tmUser, tsUser, thSystem, tmSystem, tsSystem, thIdle, tmIdle, tsIdle, thNice, tmNice, tsNice, thIowait, tmIowait, tsIowait, thIrq, tmIrq, tsIrq, thSoftirq, tmSoftirq, tsSoftirq, thSteal, tmSteal, tsSteal, thGuest, tmGuest, tsGuest, thGuestNice, tmGuestNice, tsGuestNice)
 
 				//AVG//เวลาโดยเฉลี่ย
 				thAvgscores := []int{thUser, thSystem, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
