@@ -125,6 +125,8 @@ func (m *CPUMonitor) Start() {
 	go func() {
 		for range m.ticker.C {
 
+			physical, _ := cpu.Counts(false)
+
 			// ดึง CPU usage รวม
 			percentTotal, err := cpu.Percent(100*time.Millisecond, false)
 			if err != nil || len(percentTotal) == 0 {
@@ -182,6 +184,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					nCPU, d.User, d.System, d.Idle, d.Nice, d.Iowait, d.Irq, d.Softirq, d.Steal, d.Guest, d.GuestNice)
 
 				//แปลงเป็นเวลาสากล
+
 				thUser, tmUser, tsUser := processTimeS(d.User)
 				//fmt.Println(d.User)
 				thSystem, tmSystem, tsSystem := processTimeS(d.System)
@@ -230,11 +233,20 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				//fmt.Print(timesTotalAvg)
 
 			}
+			//var AA1 float64
+			AA1 := int(totalIdle) / int(physical)
+			AA2 := float64(AA1)
+			A1, A2, A3 := processTimeS(AA2)
+			var AA string
+			AA += fmt.Sprintf(
+				"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
+
 			//จัดเรียง timesusage
 			var timesusage string
 			timesusage += timesSec
 			timesusage += timesHms
 			timesusage += timesTotalAvg
+			timesusage += AA
 			timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
@@ -311,4 +323,13 @@ func Avg(valuex int, valuey int) float64 {
 		return float64(valuex) / float64(valuey)
 	}
 	return 0
+
+	//var AA1 float64
+	AA1 := int(totalIdle) / int(physical)
+	AA2 := float64(AA1)
+	A1, A2, A3 := processTimeS(AA2)
+	var AA string
+	AA += fmt.Sprintf(
+		"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
+
 }
