@@ -141,7 +141,7 @@ func (m *CPUMonitor) Start() {
 			for i, pc := range percentPerCore {
 				PerCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
 			}
-			//รวม usage
+			//จัดเรียง usage
 			var usage string
 			usage += fmt.Sprintf("Usage Avg : %.2f\n\n", percentTotal[0])
 			usage += fmt.Sprintf("%s\n", PerCore)
@@ -204,33 +204,43 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				//fmt.Print(timesHms)
 
 				//AVG//เวลาโดยเฉลี่ย
-				thAvgscores := []int{thUser, thSystem, thIdle, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
-				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
-				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
-
+				thAvgscores := []int{thUser, thSystem, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
+				tmAvgscores := []int{tmUser, tmSystem, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
+				tsAvgscores := []int{tsUser, tsSystem, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
 				// ***แยก system กับ idle
-				//	thidleAvgscores := []int{}
-				//	tmidleAvgscores := []int{}
-				//	tsidleAvgscores := []int{}
+				thidleAvgscores := []int{thIdle}
+				tmidleAvgscores := []int{tmIdle}
+				tsidleAvgscores := []int{tsIdle}
 
 				thsum, thavg := numSumAndCount(thAvgscores) //ok
 				tmsum, tmavg := numSumAndCount(tmAvgscores)
 				tssum, tsavg := numSumAndCount(tsAvgscores)
+				// ***แยก system กับ idle
+				thidlesum, thidleavg := numSumAndCount(thidleAvgscores) //ok
+				tmidlesum, tmidleavg := numSumAndCount(tmidleAvgscores)
+				tsidlesum, tsidleavg := numSumAndCount(tsidleAvgscores)
 
 				thAvg := Avg(thsum, thavg)
 				tmAvg := Avg(tmsum, tmavg)
 				tsAvg := Avg(tssum, tsavg)
+				// ***แยก system กับ idle
+				thidleAvg := Avg(thidlesum, thidleavg)
+				tmidleAvg := Avg(tmidlesum, tmidleavg)
+				tsidleAvg := Avg(tsidlesum, tsidleavg)
 
-				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thAvg, tmAvg, tsAvg)
+				timesTotalAvg += fmt.Sprintf(
+					"[ %s ] เฉลี่ย *usage [ %.f : %.f : %.f ] *idle [ %.f : %.f : %.f ]\n",
+					nCPU, thAvg, tmAvg, tsAvg, thidleAvg, tmidleAvg, tsidleAvg)
 				//fmt.Print(timesTotalAvg)
 
 			}
-			//รวม timesusage
+			//จัดเรียง timesusage
 			var timesusage string
 			timesusage += timesSec
 			timesusage += timesHms
 			timesusage += timesTotalAvg
 			timesusage += meanLabel
+
 			if len(percentTotal) > 0 {
 
 				data := StCPUData{
@@ -285,7 +295,7 @@ func processTimeS(value float64) (int, int, int) {
 }
 
 // ============================================================================
-// SECTION_NAME
+// หาค่าเฉลี่ย
 // ============================================================================
 func numSumAndCount(value []int) (int, int) {
 	sum := 0
