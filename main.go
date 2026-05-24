@@ -8,5 +8,4 @@ import (
 func main() {
 	uiwindows.CreateWindow()
 
-	//uiwindows.main()
 }

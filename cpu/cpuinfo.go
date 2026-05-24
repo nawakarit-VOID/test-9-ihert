@@ -208,46 +208,11 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				tmAvgscores := []int{tmUser, tmSystem, tmIdle, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
 				tsAvgscores := []int{tsUser, tsSystem, tsIdle, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
 
+				// ***แยก system กับ idle
 				//	thidleAvgscores := []int{}
 				//	tmidleAvgscores := []int{}
 				//	tsidleAvgscores := []int{}
 
-				//thsumAvg := 0
-				//tmsumAvg := 0
-				//tssumAvg := 0
-
-				//thvalidCount := 0 // สร้างตัวแปรมาไว้นับเฉพาะคนที่มีคะแนน
-				//tmvalidCount := 0
-				//tsvalidCount := 0
-
-				/*thsumAvg, thvalidCount, */
-				//			 sum, count := numSumAndCount(d.User)
-				//thavg := numSumAndCount(d.User)
-				//tmavg := numSumAndCount(tmAvgscores)
-				//tsavg := numSumAndCount(tsAvgscores)
-				/*
-					for _, thscore := range thAvgscores {
-						thsumAvg += thscore
-						if thscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-							thvalidCount++
-						}
-					}
-
-					for _, tmscore := range tmAvgscores {
-						tmsumAvg += tmscore
-						if tmscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-							tmvalidCount++
-						}
-					}
-
-					for _, tsscore := range tsAvgscores {
-						tssumAvg += tsscore
-						if tsscore > 0 { // ถ้ามากกว่า 0 ให้นับเพิ่ม
-							tsvalidCount++
-						}
-					}
-				*/
-				//thsum, thcount := numSumAndCount(thAvgscores)
 				thsum, thavg := numSumAndCount(thAvgscores) //ok
 				tmsum, tmavg := numSumAndCount(tmAvgscores)
 				tssum, tsavg := numSumAndCount(tsAvgscores)
@@ -256,30 +221,6 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				tmAvg := Avg(tmsum, tmavg)
 				tsAvg := Avg(tssum, tsavg)
 
-				/*		var thavg float64
-						if count > 0 {
-							thavg = float64(thsum) / float64(thcount)
-						}
-				*/
-				/*
-					// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
-					// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
-					var thavg float64
-					if thvalidCount > 0 {
-						thavg = float64(thsumAvg) / float64(thvalidCount)
-					}
-
-					var tmavg float64
-					if tmvalidCount > 0 {
-						tmavg = float64(tmsumAvg) / float64(tmvalidCount)
-					}
-					var tsavg float64
-					if tsvalidCount > 0 {
-						tsavg = float64(tssumAvg) / float64(tsvalidCount)
-					}
-				*/
-
-				//timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thavg /*tmavg, tsavg*/)
 				timesTotalAvg += fmt.Sprintf("[ %s ] เฉลี่ย [ %.f : %.f : %.f ]\n", nCPU, thAvg, tmAvg, tsAvg)
 				//fmt.Print(timesTotalAvg)
 
@@ -356,7 +297,6 @@ func numSumAndCount(value []int) (int, int) {
 			count++
 		}
 	}
-
 	return sum, count
 }
 
@@ -366,11 +306,3 @@ func Avg(valuex int, valuey int) float64 {
 	}
 	return 0
 }
-
-/*
-	// หารด้วยจำนวนเฉพาะคนที่มีคะแนน (ไม่รวมเลข 0)
-	// ป้องกันเคสที่ validtCount เป็น 0 ด้วยการเช็คเงื่อนไขก่อนหาร
-	if count > 0 {
-		avg = float64(sum) / float64(count)
-	}
-*/
