@@ -175,7 +175,16 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			var AtotalIdle string
 			for _, d := range times {
 
+				totalUser += d.User
+				totalSystem += d.System
 				totalIdle += d.Idle //รวม idle
+				totalNice += d.Nice
+				totalIowait += d.Iowait
+				totalIrq += d.Irq
+				totalSoftirq += d.Softirq
+				totalSteal += d.Steal
+				totalGuest += d.Guest
+				totalGuestNice += d.GuestNice
 
 				nCPU := d.CPU
 				//วินาที *ดิบ
@@ -234,6 +243,17 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 
 				thlIdle, tmlIdle, tslIdle := Avg5(totalIdle, physical)
 				AtotalIdle = fmt.Sprintf("[ AtotalIdle ] *idle [ %d : %d : %d ]\n", thlIdle, tmlIdle, tslIdle)
+
+				totalUser
+				totalSystem
+				totalIdle
+				totalNice
+				totalIowait
+				totalIrq
+				totalSoftirq
+				totalSteal
+				totalGuest
+				totalGuestNice
 			}
 
 			//var AA1 float64
