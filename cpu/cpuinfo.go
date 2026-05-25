@@ -321,15 +321,17 @@ func numSumAndCount(value []int) (int, int) {
 func Avg(valuex int, valuey int) float64 {
 	if valuey > 0 {
 		return float64(valuex) / float64(valuey)
+
 	}
 	return 0
+	/*
+	   //var AA1 float64
+	   AA1 := int(totalIdle) / int(physical)
+	   AA2 := float64(AA1)
+	   A1, A2, A3 := processTimeS(AA2)
+	   var AA string
+	   AA += fmt.Sprintf(
 
-	//var AA1 float64
-	AA1 := int(totalIdle) / int(physical)
-	AA2 := float64(AA1)
-	A1, A2, A3 := processTimeS(AA2)
-	var AA string
-	AA += fmt.Sprintf(
-		"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
-
+	   	"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
+	*/
 }
