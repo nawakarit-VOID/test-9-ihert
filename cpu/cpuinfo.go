@@ -172,7 +172,7 @@ Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
 
 			var totalIdle float64
-
+			var AtotalIdle string
 			for _, d := range times {
 
 				totalIdle += d.Idle //รวม idle
@@ -232,7 +232,10 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					nCPU, thAvg, tmAvg, tsAvg, thidleAvg, tmidleAvg, tsidleAvg)
 				//fmt.Print(timesTotalAvg)
 
+				thlIdle, tmlIdle, tslIdle := Avg5(totalIdle, physical)
+				AtotalIdle = fmt.Sprintf("[ AtotalIdle ] *idle [ %d : %d : %d ]\n", thlIdle, tmlIdle, tslIdle)
 			}
+
 			//var AA1 float64
 			AA1 := int(totalIdle) / int(physical)
 			AA2 := float64(AA1)
@@ -247,6 +250,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			timesusage += timesHms
 			timesusage += timesTotalAvg
 			timesusage += AA
+			timesusage += AtotalIdle
 			timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
@@ -333,5 +337,23 @@ func Avg(valuex int, valuey int) float64 {
 	   AA += fmt.Sprintf(
 
 	   	"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
+	*/
+}
+
+func Avg5(value1 float64, value2 int) (int, int, int) {
+
+	AA1 := int(value1) / int(value2)
+	AA2 := float64(AA1)
+	A1, A2, A3 := processTimeS(AA2)
+
+	return A1, A2, A3
+	/*
+	   //var AA1 float64
+	   AA1 := int(totalIdle) / int(physical)
+	   AA2 := float64(AA1)
+	   A1, A2, A3 := processTimeS(AA2)
+	   var AA string
+
+	   AA += fmt.Sprintf(	"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
 	*/
 }
