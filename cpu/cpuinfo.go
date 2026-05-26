@@ -157,17 +157,20 @@ func (m *CPUMonitor) Start() {
 			var timesHms string
 			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
 			var timesTotalAvg string
-			timesTotalAvg += "\n[ เฉลี่ย ]\n\n"
-			meanLabel := "\n[ ความหมาย ]\n\n" + `User : โปรแกรมของผู้ใช้
-System : ระบบ
-Idle : ไม่ได้ทำอะไร
-Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
-Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
-Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
-Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
-Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
-Guest : เวลาที่ CPU ใช้งาน guest virtual machine
-GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
+
+			/*		meanLabel := "\n[ ความหมาย ]\n\n" + `User : โปรแกรมของผู้ใช้
+					System : ระบบ
+					Idle : ไม่ได้ทำอะไร
+					Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
+					Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
+					Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
+					Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
+					Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
+					Guest : เวลาที่ CPU ใช้งาน guest virtual machine
+					GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
+			*/
+
+			meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
 
 			var totalUser float64
 			var totalSystem float64
@@ -179,8 +182,6 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			var totalSteal float64
 			var totalGuest float64
 			var totalGuestNice float64
-
-			var AtotalIdle string
 
 			for _, d := range times {
 
@@ -231,8 +232,8 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				hGuest, mGuest, sGuest := Avg(totalGuest)
 				hGuestNice, mGuestNice, sGuestNice := Avg(totalGuestNice)
 				//จัดเรียงเวลาโดยเฉลี่ย
-				AtotalIdle = fmt.Sprintf(
-					"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+				timesTotalAvg = fmt.Sprintf(
+					"\n[ เฉลี่ย ]\n\n"+"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
 					hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
 
 			}
@@ -242,8 +243,6 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 			timesusage += timesSec
 			timesusage += timesHms
 			timesusage += timesTotalAvg
-			//timesusage += AA
-			timesusage += AtotalIdle
 			timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
