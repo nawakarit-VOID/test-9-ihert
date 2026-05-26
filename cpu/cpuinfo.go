@@ -202,9 +202,7 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					nCPU, d.User, d.System, d.Idle, d.Nice, d.Iowait, d.Irq, d.Softirq, d.Steal, d.Guest, d.GuestNice)
 
 				//แปลงเป็นเวลาสากล
-
 				thUser, tmUser, tsUser := processTimeS(d.User)
-				//fmt.Println(d.User)
 				thSystem, tmSystem, tsSystem := processTimeS(d.System)
 				thIdle, tmIdle, tsIdle := processTimeS(d.Idle)
 				thNice, tmNice, tsNice := processTimeS(d.Nice)
@@ -215,55 +213,27 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 				thGuest, tmGuest, tsGuest := processTimeS(d.Guest)
 				thGuestNice, tmGuestNice, tsGuestNice := processTimeS(d.GuestNice)
 
-				//จัดเรียง
+				//จัดเรียงเวลาสากล
 				timesHms += fmt.Sprintf(
 					"[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
 					nCPU, thUser, tmUser, tsUser, thSystem, tmSystem, tsSystem, thIdle, tmIdle, tsIdle, thNice, tmNice, tsNice, thIowait, tmIowait, tsIowait, thIrq, tmIrq, tsIrq, thSoftirq, tmSoftirq, tsSoftirq, thSteal, tmSteal, tsSteal, thGuest, tmGuest, tsGuest, thGuestNice, tmGuestNice, tsGuestNice)
 
 				//AVG//เวลาโดยเฉลี่ย
-				thAvgscores := []int{thUser, thSystem, thNice, thIowait, thIrq, thSoftirq, thSteal, thGuest, thGuestNice}
-				tmAvgscores := []int{tmUser, tmSystem, tmNice, tmIowait, tmIrq, tmSoftirq, tmSteal, tmGuest, tmGuestNice}
-				tsAvgscores := []int{tsUser, tsSystem, tsNice, tsIowait, tsIrq, tsSoftirq, tsSteal, tsGuest, tsGuestNice}
 				// ***แยก system กับ idle
-				thidleAvgscores := []int{thIdle}
-				tmidleAvgscores := []int{tmIdle}
-				tsidleAvgscores := []int{tsIdle}
-
-				thsum, thavg := numSumAndCount(thAvgscores) //ok
-				tmsum, tmavg := numSumAndCount(tmAvgscores)
-				tssum, tsavg := numSumAndCount(tsAvgscores)
-				// ***แยก system กับ idle
-				thidlesum, thidleavg := numSumAndCount(thidleAvgscores) //ok
-				tmidlesum, tmidleavg := numSumAndCount(tmidleAvgscores)
-				tsidlesum, tsidleavg := numSumAndCount(tsidleAvgscores)
-
-				thAvg := Avg(thsum, thavg)
-				tmAvg := Avg(tmsum, tmavg)
-				tsAvg := Avg(tssum, tsavg)
-				// ***แยก system กับ idle
-				thidleAvg := Avg(thidlesum, thidleavg)
-				tmidleAvg := Avg(tmidlesum, tmidleavg)
-				tsidleAvg := Avg(tsidlesum, tsidleavg)
-
-				timesTotalAvg += fmt.Sprintf(
-					"[ %s ] เฉลี่ย *usage [ %.f : %.f : %.f ] *idle [ %.f : %.f : %.f ]\n",
-					nCPU, thAvg, tmAvg, tsAvg, thidleAvg, tmidleAvg, tsidleAvg)
-				//fmt.Print(timesTotalAvg)
-
-				hUser, mUser, sUser := Avg5(totalUser)
-				hSystem, mSystem, sSysteme := Avg5(totalSystem)
-				hIdle, mIdle, sIdle := Avg5(totalIdle)
-				hNice, mNice, sNice := Avg5(totalNice)
-				hIowait, mIowait, sIowait := Avg5(totalIowait)
-				hIrq, mIrq, sIrq := Avg5(totalIrq)
-				hSoftirq, mSoftirq, sSoftirq := Avg5(totalSoftirq)
-				hSteal, mSteal, sSteal := Avg5(totalSteal)
-				hGuest, mGuest, sGuest := Avg5(totalGuest)
-				hGuestNice, mGuestNice, sGuestNice := Avg5(totalGuestNice)
-
+				hUser, mUser, sUser := Avg(totalUser)
+				hSystem, mSystem, sSysteme := Avg(totalSystem)
+				hIdle, mIdle, sIdle := Avg(totalIdle)
+				hNice, mNice, sNice := Avg(totalNice)
+				hIowait, mIowait, sIowait := Avg(totalIowait)
+				hIrq, mIrq, sIrq := Avg(totalIrq)
+				hSoftirq, mSoftirq, sSoftirq := Avg(totalSoftirq)
+				hSteal, mSteal, sSteal := Avg(totalSteal)
+				hGuest, mGuest, sGuest := Avg(totalGuest)
+				hGuestNice, mGuestNice, sGuestNice := Avg(totalGuestNice)
+				//จัดเรียงเวลาโดยเฉลี่ย
 				AtotalIdle = fmt.Sprintf(
-					"[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
-					nCPU, hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
+					"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
 
 			}
 
@@ -345,38 +315,10 @@ func numSumAndCount(value []int) (int, int) {
 	return sum, count
 }
 
-func Avg(valuex int, valuey int) float64 {
-	if valuey > 0 {
-		return float64(valuex) / float64(valuey)
-
-	}
-	return 0
-	/*
-	   //var AA1 float64
-	   AA1 := int(totalIdle) / int(physical)
-	   AA2 := float64(AA1)
-	   A1, A2, A3 := processTimeS(AA2)
-	   var AA string
-	   AA += fmt.Sprintf(
-
-	   	"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
-	*/
-}
-
-func Avg5(value float64) (int, int, int) {
+func Avg(value float64) (int, int, int) {
 	physical, _ := cpu.Counts(false)
 	AA1 := int(value) / int(physical)
 	AA2 := float64(AA1)
 	A1, A2, A3 := processTimeS(AA2)
-
 	return A1, A2, A3
-	/*
-	   //var AA1 float64
-	   AA1 := int(totalIdle) / int(physical)
-	   AA2 := float64(AA1)
-	   A1, A2, A3 := processTimeS(AA2)
-	   var AA string
-
-	   AA += fmt.Sprintf(	"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
-	*/
 }
