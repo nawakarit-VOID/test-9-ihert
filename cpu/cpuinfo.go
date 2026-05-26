@@ -125,8 +125,6 @@ func (m *CPUMonitor) Start() {
 	go func() {
 		for range m.ticker.C {
 
-			physical, _ := cpu.Counts(false)
-
 			// ดึง CPU usage รวม
 			percentTotal, err := cpu.Percent(100*time.Millisecond, false)
 			if err != nil || len(percentTotal) == 0 {
@@ -171,8 +169,19 @@ Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
 Guest : เวลาที่ CPU ใช้งาน guest virtual machine
 GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
 
+			var totalUser float64
+			var totalSystem float64
 			var totalIdle float64
+			var totalNice float64
+			var totalIowait float64
+			var totalIrq float64
+			var totalSoftirq float64
+			var totalSteal float64
+			var totalGuest float64
+			var totalGuestNice float64
+
 			var AtotalIdle string
+
 			for _, d := range times {
 
 				totalUser += d.User
@@ -241,35 +250,29 @@ GuestNice : เวลาที่ guest VM ใช้งานแบบ nice prio
 					nCPU, thAvg, tmAvg, tsAvg, thidleAvg, tmidleAvg, tsidleAvg)
 				//fmt.Print(timesTotalAvg)
 
-				thlIdle, tmlIdle, tslIdle := Avg5(totalIdle, physical)
-				AtotalIdle = fmt.Sprintf("[ AtotalIdle ] *idle [ %d : %d : %d ]\n", thlIdle, tmlIdle, tslIdle)
+				hUser, mUser, sUser := Avg5(totalUser)
+				hSystem, mSystem, sSysteme := Avg5(totalSystem)
+				hIdle, mIdle, sIdle := Avg5(totalIdle)
+				hNice, mNice, sNice := Avg5(totalNice)
+				hIowait, mIowait, sIowait := Avg5(totalIowait)
+				hIrq, mIrq, sIrq := Avg5(totalIrq)
+				hSoftirq, mSoftirq, sSoftirq := Avg5(totalSoftirq)
+				hSteal, mSteal, sSteal := Avg5(totalSteal)
+				hGuest, mGuest, sGuest := Avg5(totalGuest)
+				hGuestNice, mGuestNice, sGuestNice := Avg5(totalGuestNice)
 
-				totalUser
-				totalSystem
-				totalIdle
-				totalNice
-				totalIowait
-				totalIrq
-				totalSoftirq
-				totalSteal
-				totalGuest
-				totalGuestNice
+				AtotalIdle = fmt.Sprintf(
+					"[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					nCPU, hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
+
 			}
-
-			//var AA1 float64
-			AA1 := int(totalIdle) / int(physical)
-			AA2 := float64(AA1)
-			A1, A2, A3 := processTimeS(AA2)
-			var AA string
-			AA += fmt.Sprintf(
-				"[ ] *idle [ %d : %d : %d ]\n", A1, A2, A3)
 
 			//จัดเรียง timesusage
 			var timesusage string
 			timesusage += timesSec
 			timesusage += timesHms
 			timesusage += timesTotalAvg
-			timesusage += AA
+			//timesusage += AA
 			timesusage += AtotalIdle
 			timesusage += meanLabel
 
@@ -360,9 +363,9 @@ func Avg(valuex int, valuey int) float64 {
 	*/
 }
 
-func Avg5(value1 float64, value2 int) (int, int, int) {
-
-	AA1 := int(value1) / int(value2)
+func Avg5(value float64) (int, int, int) {
+	physical, _ := cpu.Counts(false)
+	AA1 := int(value) / int(physical)
 	AA2 := float64(AA1)
 	A1, A2, A3 := processTimeS(AA2)
 
