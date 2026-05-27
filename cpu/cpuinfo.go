@@ -154,25 +154,21 @@ func (m *CPUMonitor) Start() {
 
 			var timesSec string
 			timesSec += "[ ข้อมูลดิบ ]\n\n"
+
 			var timesHms string
 			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
+
+			var timesTotalAvglabel string
+			timesTotalAvglabel += "\n[ เฉลี่ย ]\n\n"
+			timesTotalAvglabel += "[ คอร์ ] | [    โปรแกรมผู้ใช้   ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาปรับ priority ] | [ CPU รอ I/O ] | [ Hardware ขัด ] | [ Software ขัดจังหวะ ] | [ VM ถูก hyper แย่ง ] | [ ใช้ guest virtual ] | [ VM ใช้แบบ nice priority ]\n"
+
 			var timesTotalAvg string
 
-			/*		meanLabel := "\n[ ความหมาย ]\n\n" + `User : โปรแกรมของผู้ใช้
-					System : ระบบ
-					Idle : ไม่ได้ทำอะไร
-					Nice : เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)
-					Iowait : เวลาที่ CPU รอ I/O เช่น disk หรือ network
-					Irq : เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ
-					Softirq : เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ
-					Steal : เวลาที่ VM ถูก hypervisor แย่ง CPU ไป
-					Guest : เวลาที่ CPU ใช้งาน guest virtual machine
-					GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
+			/*	var meanLabel string
+				//meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
+				meanLabel += "\n[ ความหมาย ]\n\n"
+				meanLabel += " [ คอร์ ] | [      โปรแกรมผู้ใช้     ] | [               ระบบ                ] | [      ไม่ได้ทำอะไร     ] | [  เวลาปรับ priority  ] | [         CPU รอ I/O        ] | [   Hardware ขัด   ] | [  Software ขัดจังหวะ   ] | [  VM ถูก hyper แย่ง  ] | [   ใช้ guest virtual    ] | [ VM ใช้แบบ nice priority ]\n"
 			*/
-
-			//meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
-			meanLabel := "\n[ ความหมาย ]\n\n" + " [ คอร์ ] | [      โปรแกรมผู้ใช้     ] | [               ระบบ                ] | [      ไม่ได้ทำอะไร     ] | [  เวลาปรับ priority  ] | [         CPU รอ I/O        ] | [   Hardware ขัด   ] | [  Software ขัดจังหวะ   ] | [  VM ถูก hyper แย่ง  ] | [   ใช้ guest virtual    ] | [ VM ใช้แบบ nice priority ]\n"
-
 			var totalUser float64
 			var totalSystem float64
 			var totalIdle float64
@@ -234,7 +230,7 @@ func (m *CPUMonitor) Start() {
 				hGuestNice, mGuestNice, sGuestNice := Avg(totalGuestNice)
 				//จัดเรียงเวลาโดยเฉลี่ย
 				timesTotalAvg = fmt.Sprintf(
-					"\n[ เฉลี่ย ]\n\n"+"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
 					hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
 
 			}
@@ -243,8 +239,9 @@ func (m *CPUMonitor) Start() {
 			var timesusage string
 			timesusage += timesSec
 			timesusage += timesHms
+			timesusage += timesTotalAvglabel
 			timesusage += timesTotalAvg
-			timesusage += meanLabel
+			//	timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
 
