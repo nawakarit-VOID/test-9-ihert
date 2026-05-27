@@ -19,7 +19,7 @@ func CPUdata() map[string]interface{} {
 	// Overview
 	// ============================================================================
 	var overview string // gopsutil
-	overview += fmt.Sprintf("CPU : %s\n", info[0].ModelName)
+	overview += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
 	overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
 	overview += fmt.Sprintf("Cores : %d\n", physical)
 	overview += fmt.Sprintf("Thread : %d\n", logical)
@@ -33,7 +33,7 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Detail
 	// ============================================================================
-	Hyperthreading := fmt.Sprintf("Hyperthreading: [ %v ]\n", logical > physical)
+	Hyperthreading := fmt.Sprintf("\nHyperthreading: [ %v ]\n", logical > physical)
 
 	var cpuThreadCoreSocketresult string //จำนวน thread
 	cpuThreadCoreSocketresult += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
@@ -77,6 +77,7 @@ func CPUdata() map[string]interface{} {
 	// Flags Feature
 	// ============================================================================
 	var flagsfeature string
+	flagsfeature += "\n"
 	for i, flag := range info[0].Flags {
 		flagsfeature += flag
 		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
@@ -143,6 +144,7 @@ func (m *CPUMonitor) Start() {
 			}
 			//จัดเรียง usage
 			var usage string
+			usage += "\n"
 			usage += fmt.Sprintf("Usage Avg : %.2f\n\n", percentTotal[0])
 			usage += fmt.Sprintf("%s\n", PerCore)
 
@@ -152,23 +154,18 @@ func (m *CPUMonitor) Start() {
 				continue
 			}
 
-			var timesSec string
-			timesSec += "[ ข้อมูลดิบ ]\n\n"
-
-			var timesHms string
-			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
-
 			var timesTotalAvglabel string
 			timesTotalAvglabel += "\n[ เฉลี่ย ]\n\n"
 			timesTotalAvglabel += "[ คอร์ ] | [    โปรแกรมผู้ใช้   ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาปรับ priority ] | [ CPU รอ I/O ] | [ Hardware ขัด ] | [ Software ขัดจังหวะ ] | [ VM ถูก hyper แย่ง ] | [ ใช้ guest virtual ] | [ VM ใช้แบบ nice priority ]\n"
 
+			var timesSec string
+			timesSec += "\n[ ข้อมูลดิบ ]\n\n"
+
+			var timesHms string
+			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
+
 			var timesTotalAvg string
 
-			/*	var meanLabel string
-				//meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
-				meanLabel += "\n[ ความหมาย ]\n\n"
-				meanLabel += " [ คอร์ ] | [      โปรแกรมผู้ใช้     ] | [               ระบบ                ] | [      ไม่ได้ทำอะไร     ] | [  เวลาปรับ priority  ] | [         CPU รอ I/O        ] | [   Hardware ขัด   ] | [  Software ขัดจังหวะ   ] | [  VM ถูก hyper แย่ง  ] | [   ใช้ guest virtual    ] | [ VM ใช้แบบ nice priority ]\n"
-			*/
 			var totalUser float64
 			var totalSystem float64
 			var totalIdle float64
@@ -237,10 +234,11 @@ func (m *CPUMonitor) Start() {
 
 			//จัดเรียง timesusage
 			var timesusage string
-			timesusage += timesSec
-			timesusage += timesHms
 			timesusage += timesTotalAvglabel
 			timesusage += timesTotalAvg
+			timesusage += timesSec
+			timesusage += timesHms
+
 			//	timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
