@@ -170,7 +170,8 @@ func (m *CPUMonitor) Start() {
 					GuestNice : เวลาที่ guest VM ใช้งานแบบ nice priority`
 			*/
 
-			meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
+			//meanLabel := "\n[ ความหมาย ]\n\n" + "[ คอร์ ] | [ โปรแกรมผู้ใช้ ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาที่ใช้กับ process ที่ถูกปรับ priority (nice)] | [  เวลาที่ CPU รอ I/O เช่น disk หรือ network ] | [ เวลาที่ใช้จัดการ Hardware ที่ขัดจังหวะ ] | [ เวลาที่ใช้จัดการ Software ที่ขัดจังหวะ ] | [ เวลาที่ VM ถูก hypervisor แย่ง CPU ไป ] | [ เวลาที่ CPU ใช้งาน guest virtual machine ] | [ เวลาที่ guest VM ใช้งานแบบ nice priority ]\n"
+			meanLabel := "\n[ ความหมาย ]\n\n" + " [ คอร์ ] | [      โปรแกรมผู้ใช้     ] | [               ระบบ                ] | [      ไม่ได้ทำอะไร     ] | [  เวลาปรับ priority  ] | [         CPU รอ I/O        ] | [   Hardware ขัด   ] | [  Software ขัดจังหวะ   ] | [  VM ถูก hyper แย่ง  ] | [   ใช้ guest virtual    ] | [ VM ใช้แบบ nice priority ]\n"
 
 			var totalUser float64
 			var totalSystem float64
