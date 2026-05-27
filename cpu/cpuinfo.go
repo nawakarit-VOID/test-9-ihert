@@ -156,7 +156,7 @@ func (m *CPUMonitor) Start() {
 
 			var timesTotalAvglabel string
 			timesTotalAvglabel += "\n[ เฉลี่ย ]\n\n"
-			timesTotalAvglabel += "[ คอร์ ] | [    โปรแกรมผู้ใช้   ] | [           ระบบ           ] | [ ไม่ได้ทำอะไร ] | [ เวลาปรับ priority ] | [ CPU รอ I/O ] | [ Hardware ขัด ] | [ Software ขัดจังหวะ ] | [ VM ถูก hyper แย่ง ] | [ ใช้ guest virtual ] | [ VM ใช้แบบ nice priority ]\n"
+			var timesTotalAvg string
 
 			var timesSec string
 			timesSec += "\n[ ข้อมูลดิบ ]\n\n"
@@ -164,7 +164,9 @@ func (m *CPUMonitor) Start() {
 			var timesHms string
 			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
 
-			var timesTotalAvg string
+			var meaningLabel string
+			meaningLabel += "\nความหมาย\n\n"
+			meaningLabel += "[ คอร์ ] | [ User : โปรแกรมผู้ใช้ ] | [ System : ระบบ ] | [ Idle : ไม่ได้ทำอะไร ] | [ Nice : เวลาปรับ priority ] | [ Iowait : CPU รอ I/O ]\n[ Irq : Hardware ขัด ] | [ Softirq : Software ขัดจังหวะ ] | [ Steal : VM ถูก hyper แย่ง ] | [ Guest : ใช้ guest virtual ] | [ GuestNice : VM ใช้แบบ nice priority ]\n"
 
 			var totalUser float64
 			var totalSystem float64
@@ -238,6 +240,7 @@ func (m *CPUMonitor) Start() {
 			timesusage += timesTotalAvg
 			timesusage += timesSec
 			timesusage += timesHms
+			timesusage += meaningLabel
 
 			//	timesusage += meanLabel
 
