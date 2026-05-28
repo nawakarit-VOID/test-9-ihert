@@ -1,9 +1,12 @@
-package cpuinfo1
+package cpuinfo
 
 import (
 	"fmt"
 	"time"
 
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
 )
@@ -94,6 +97,13 @@ func CPUdata() map[string]interface{} {
 		"FlagsFeature": flagsfeature,
 	}
 
+}
+
+func HelloPage() fyne.CanvasObject {
+	return container.NewVBox(
+		widget.NewLabel("Hello"),
+		widget.NewButton("OK", func() {}),
+	)
 }
 
 // ============================================================================
