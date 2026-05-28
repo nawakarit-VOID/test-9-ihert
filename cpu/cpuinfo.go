@@ -166,7 +166,7 @@ func (m *CPUMonitor) Start() {
 
 			var meaningLabel string
 			meaningLabel += "\nความหมาย\n\n"
-			meaningLabel += "[ คอร์ ] | [ User : โปรแกรมผู้ใช้ ] | [ System : ระบบ ] | [ Idle : ไม่ได้ทำอะไร ] | [ Nice : เวลาปรับ priority ] | [ Iowait : CPU รอ I/O ]\n[ Irq : Hardware ขัด ] | [ Softirq : Software ขัดจังหวะ ] | [ Steal : VM ถูก hyper แย่ง ] | [ Guest : ใช้ guest virtual ] | [ GuestNice : VM ใช้แบบ nice priority ]\n"
+			meaningLabel += "[ User : โปรแกรมผู้ใช้ ]\n[ System : ระบบ ]\n[ Idle : ไม่ได้ทำอะไร ]\n[ Nice : เวลาปรับ priority ]\n[ Iowait : CPU รอ I/O ]\n[ Irq : Hardware ขัด ]\n[ Softirq : Software ขัดจังหวะ ]\n[ Steal : VM ถูก hyper แย่ง ]\n[ Guest : ใช้ guest virtual ]\n[ GuestNice : VM ใช้แบบ nice priority ]\n"
 
 			var totalUser float64
 			var totalSystem float64
