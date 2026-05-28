@@ -48,14 +48,14 @@ func CreateWindow() {
 	})
 	monitor.Start() // เริ่ม monitoring
 
-	//c1 := cpuinfo.HelloPage()
+	cpuPage := cpuinfo.CpuPage()
 
 	//จัดหน้า
 	cpuuse := container.NewScroll(
 		container.NewVBox(
 			//widget.NewCard("CPU Information", "", container.NewVBox(
-			//c1,
-			cpuinfo.HelloPage(),
+			cpuPage,
+			//cpuinfo.CpuPage(),
 			usageLabel,
 		))
 

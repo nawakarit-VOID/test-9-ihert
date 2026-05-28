@@ -33,6 +33,28 @@ func CPUdata() map[string]interface{} {
 	overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
 	overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
 
+	//แยกส่วน
+	var modelName string
+	var vendorID string
+	var core string
+	var thread string
+	var freqMax string
+	var family string
+	var modelid string
+	var stepping string
+	var cachet string
+	var microcode string
+
+	modelName += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
+	vendorID += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
+	core += fmt.Sprintf("Cores : %d\n", physical)
+	thread += fmt.Sprintf("Thread : %d\n", logical)
+	freqMax += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
+	family += fmt.Sprintf("Family : %s\n", info[0].Family)
+	modelid += fmt.Sprintf("Modelid : %s\n", info[0].Model)
+	stepping += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
+	cachet += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
+	microcode += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
 	// ============================================================================
 	// Detail
 	// ============================================================================
@@ -95,17 +117,33 @@ func CPUdata() map[string]interface{} {
 		"Overview":     overview,
 		"Detail":       detail,
 		"FlagsFeature": flagsfeature,
+
+		"ModelName": modelName,
+		"VendorID":  vendorID,
+		"Core    ":  core,
+		"Thread  ":  thread,
+		"FreqMax ":  freqMax,
+		"Family  ":  family,
+		"Modelid ":  modelid,
+		"Stepping":  stepping,
+		"Cachet ":   cachet,
+		"Microcode": microcode,
 	}
 
 }
 
-func HelloPage() fyne.CanvasObject {
-	return container.NewVBox(
-		widget.NewLabel("Hello"),
-		widget.NewButton("OK", func() {}),
-	)
-}
-
+/*
+	: modelName,
+	: vendorID,
+	: core,
+	: thread,
+	: freqMax,
+	: family,
+	: modelid,
+	: stepping,
+	: cache,
+	: microcode,
+*/
 // ============================================================================
 // monitor
 // ============================================================================
@@ -330,3 +368,31 @@ func Avg(value float64) (int, int, int) {
 	A1, A2, A3 := processTimeS(AA2)
 	return A1, A2, A3
 }
+
+// ============================================================================
+// รวม + เอาออก
+// ============================================================================
+func CpuPage() fyne.CanvasObject {
+	dataCPUInfo := CPUdata()
+
+	return container.NewVBox(
+		widget.NewLabel("Hello"),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
+
+		//widget.NewLabel(overview),
+		widget.NewButton("OK", func() {}),
+	)
+}
+
+/*
+	"ModelName": modelName,
+		"VendorID":  vendorID,
+		"Core    ":  core,
+		"Thread  ":  thread,
+		"FreqMax ":  freqMax,
+		"Family  ":  family,
+		"Modelid ":  modelid,
+		"Stepping":  stepping,
+		"Cachet ":   cachet,
+		"Microcode": microcode,
+*/
