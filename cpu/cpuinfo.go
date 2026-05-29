@@ -21,6 +21,7 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Overview
 	// ============================================================================
+
 	var overview string // gopsutil
 	overview += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
 	overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
@@ -45,16 +46,16 @@ func CPUdata() map[string]interface{} {
 	var cachet string
 	var microcode string
 
-	modelName += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
-	vendorID += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
-	core += fmt.Sprintf("Cores : %d\n", physical)
-	thread += fmt.Sprintf("Thread : %d\n", logical)
-	freqMax += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
-	family += fmt.Sprintf("Family : %s\n", info[0].Family)
-	modelid += fmt.Sprintf("Modelid : %s\n", info[0].Model)
-	stepping += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
-	cachet += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
-	microcode += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
+	modelName = fmt.Sprintf("\nCPU : %s", info[0].ModelName)
+	vendorID = fmt.Sprintf("Vendor : %s", info[0].VendorID)
+	core = fmt.Sprintf("Cores : %d", physical)
+	thread = fmt.Sprintf("Thread : %d", logical)
+	freqMax = fmt.Sprintf("FreqMax : %.2f GHz", info[0].Mhz/1000)
+	family = fmt.Sprintf("Family : %s", info[0].Family)
+	modelid = fmt.Sprintf("Modelid : %s", info[0].Model)
+	stepping = fmt.Sprintf("Stepping : %d", info[0].Stepping)
+	cachet = fmt.Sprintf("Cache : %d MB", info[0].CacheSize/1024)
+	microcode = fmt.Sprintf("Microcode : %s", info[0].Microcode)
 	// ============================================================================
 	// Detail
 	// ============================================================================
@@ -132,18 +133,6 @@ func CPUdata() map[string]interface{} {
 
 }
 
-/*
-	: modelName,
-	: vendorID,
-	: core,
-	: thread,
-	: freqMax,
-	: family,
-	: modelid,
-	: stepping,
-	: cache,
-	: microcode,
-*/
 // ============================================================================
 // monitor
 // ============================================================================
@@ -372,19 +361,50 @@ func Avg(value float64) (int, int, int) {
 // ============================================================================
 // รวม + เอาออก
 // ============================================================================
-func CpuPage() fyne.CanvasObject {
+func CpuOverviewPage() fyne.CanvasObject {
+
 	dataCPUInfo := CPUdata()
 
 	return container.NewVBox(
+
 		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
 		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["ModelName"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["VendorID"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Core"])),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Thread"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["FreqMax"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Family"])),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Modelid"])),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Stepping"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Cachet"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Microcode"])),
 
-		widget.NewLabel("Hello"),
+		//widget.NewLabel("Hello"),
 		//widget.NewLabel(overview),
-		widget.NewButton("OK", func() {}),
+		//widget.NewButton("OK", func() {}),
+
 	)
+
 }
 
+/*
+	"ModelName":    modelName,
+	"VendorID":     vendorID,
+	"Core    ":     core,
+	"Thread  ":     thread,
+	"FreqMax ":     freqMax,
+	"Family  ":     family,
+	"Modelid ":     modelid,
+	"Stepping":     stepping,
+	"Cachet ":      cachet,
+	"Microcode":    microcode,
+*/
 /*
 	"ModelName": modelName,
 		"VendorID":  vendorID,
