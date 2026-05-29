@@ -376,9 +376,10 @@ func CpuPage() fyne.CanvasObject {
 	dataCPUInfo := CPUdata()
 
 	return container.NewVBox(
-		widget.NewLabel("Hello"),
 		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
+		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["ModelName"])),
 
+		widget.NewLabel("Hello"),
 		//widget.NewLabel(overview),
 		widget.NewButton("OK", func() {}),
 	)
