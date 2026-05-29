@@ -21,19 +21,19 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Overview
 	// ============================================================================
-
-	var overview string // gopsutil
-	overview += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
-	overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
-	overview += fmt.Sprintf("Cores : %d\n", physical)
-	overview += fmt.Sprintf("Thread : %d\n", logical)
-	overview += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
-	overview += fmt.Sprintf("Family : %s\n", info[0].Family)
-	overview += fmt.Sprintf("Modelid : %s\n", info[0].Model)
-	overview += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
-	overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
-	overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
-
+	/*
+		var overview string // gopsutil
+		overview += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
+		overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
+		overview += fmt.Sprintf("Cores : %d\n", physical)
+		overview += fmt.Sprintf("Thread : %d\n", logical)
+		overview += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
+		overview += fmt.Sprintf("Family : %s\n", info[0].Family)
+		overview += fmt.Sprintf("Modelid : %s\n", info[0].Model)
+		overview += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
+		overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
+		overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
+	*/
 	//แยกส่วน
 	var modelName string
 	var vendorID string
@@ -59,10 +59,10 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Detail
 	// ============================================================================
-	Hyperthreading := fmt.Sprintf("\nHyperthreading: [ %v ]\n", logical > physical)
+	hyperthreading := fmt.Sprintf("\nHyperthreading: [ %v ]", logical > physical)
 
 	var cpuThreadCoreSocketresult string //จำนวน thread
-	cpuThreadCoreSocketresult += ("\n[  Thread  ] : [ Core ] : [ Socket ]\n")
+	cpuThreadCoreSocketresult += ("[  Thread  ] : [ Core ] : [ Socket ]\n\n")
 	for i, cpu := range info {
 		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
 			i, cpu.CoreID, cpu.PhysicalID)
@@ -81,7 +81,7 @@ func CPUdata() map[string]interface{} {
 	c3, xc3 := processValue(cpuInfo.Cache.L3)
 
 	var cache string //cpuid
-	cache += "\n[ Cache ]\n"
+	cache += "[ Cache ]\n\n"
 	cache += fmt.Sprintf("L1d : %d %s\n", c1d, xc1d)
 	cache += fmt.Sprintf("L1i : %d %s\n", c1i, xc1i)
 	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
@@ -95,7 +95,7 @@ func CPUdata() map[string]interface{} {
 	//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 
 	var detail string //
-	detail += Hyperthreading
+	detail += hyperthreading
 	detail += cpuThreadCoreSocketresult
 	detail += cache //cpuid
 
@@ -115,7 +115,7 @@ func CPUdata() map[string]interface{} {
 
 	return map[string]interface{}{
 		// gopsutil
-		"Overview":     overview,
+		//"Overview":     overview,
 		"Detail":       detail,
 		"FlagsFeature": flagsfeature,
 
@@ -129,6 +129,11 @@ func CPUdata() map[string]interface{} {
 		"Stepping":  stepping,
 		"Cachet":    cachet,
 		"Microcode": microcode,
+
+		"Hyperthreading":            hyperthreading,
+		"CpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
+		"Cache":                     cache, //cpuid
+
 	}
 
 }
@@ -359,67 +364,40 @@ func Avg(value float64) (int, int, int) {
 }
 
 // ============================================================================
-// รวม + เอาออก
+// รวม + เอาออก CpuOverviewPage
 // ============================================================================
 func CpuOverviewPage() fyne.CanvasObject {
-
 	dataCPUInfo := CPUdata()
-
-	//core := widget.NewLabel("Core...") //Overview
-
-	//core.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Core"])) //1 แสดง cpu info
-
-	//(fmt.Sprintf("%s\n", dataCPUInfo[""])),
-
 	return container.NewVBox(
-
-		//widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["ModelName"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["ModelName"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["VendorID"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["VendorID"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Core"])),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Thread"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Core"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Thread"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["FreqMax"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FreqMax"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Family"])),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Modelid"])),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Stepping"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Family"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Modelid"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Stepping"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Cachet"])),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Cachet"])),
 		widget.NewSeparator(),
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Microcode"])),
-
-		//widget.NewLabel("Hello"),
-		//widget.NewLabel(overview),
-		//widget.NewButton("OK", func() {}),
-
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Microcode"])),
 	)
-
 }
 
-/*
-	"ModelName":    modelName,
-	"VendorID":     vendorID,
-	"Core    ":     core,
-	"Thread  ":     thread,
-	"FreqMax ":     freqMax,
-	"Family  ":     family,
-	"Modelid ":     modelid,
-	"Stepping":     stepping,
-	"Cachet ":      cachet,
-	"Microcode":    microcode,
-*/
-/*
-	"ModelName": modelName,
-		"VendorID":  vendorID,
-		"Core    ":  core,
-		"Thread  ":  thread,
-		"FreqMax ":  freqMax,
-		"Family  ":  family,
-		"Modelid ":  modelid,
-		"Stepping":  stepping,
-		"Cachet ":   cachet,
-		"Microcode": microcode,
-*/
+// ============================================================================
+// รวม + เอาออก CpuDetailPage
+// ============================================================================
+func CpuDetailPage() fyne.CanvasObject {
+	dataCPUInfo := CPUdata()
+	return container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Hyperthreading"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["CpuThreadCoreSocketresult"])),
+		widget.NewSeparator(),
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Cache"])), //cpuid
+	)
+}

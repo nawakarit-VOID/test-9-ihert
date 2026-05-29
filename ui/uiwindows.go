@@ -21,7 +21,7 @@ func CreateWindow() {
 	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 	//sub cpu
 	//overviewlabel := widget.NewLabel("Overviewlabel...") //Overview
-	detailLabel := widget.NewLabel("detailLabel...")
+	//detailLabel := widget.NewLabel("detailLabel...")
 	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 	usageLabel := widget.NewLabel("usageLabel...")
 	TimesusageLabel := widget.NewLabel("TimesusageLabel...")
@@ -35,7 +35,7 @@ func CreateWindow() {
 	//รับ cpu
 	fyne.Do(func() {
 		//overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))     //1 แสดง cpu info
-		detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))         //2 แสดง รายละเอียด
+		//detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))         //2 แสดง รายละเอียด
 		flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"])) //3 แสดง feature
 	})
 
@@ -49,7 +49,7 @@ func CreateWindow() {
 	monitor.Start() // เริ่ม monitoring
 
 	cpuOverviewPage := cpuinfo.CpuOverviewPage() //Overview
-
+	cpuDetailPage := cpuinfo.CpuDetailPage()     //Detail
 	//จัดหน้า
 	cpuuse := container.NewScroll(
 		container.NewVBox(
@@ -66,7 +66,7 @@ func CreateWindow() {
 	cpu := container.NewAppTabs(
 		//container.NewTabItem("TEST", container.NewScroll(xLabel)),
 		container.NewTabItem("Overview", container.NewScroll(cpuOverviewPage)),
-		container.NewTabItem("Detail", container.NewScroll(detailLabel)),
+		container.NewTabItem("Detail", container.NewScroll(cpuDetailPage)),
 		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		container.NewTabItem("TimeUsage", container.NewScroll(cputimeusage)),
