@@ -121,13 +121,13 @@ func CPUdata() map[string]interface{} {
 
 		"ModelName": modelName,
 		"VendorID":  vendorID,
-		"Core    ":  core,
-		"Thread  ":  thread,
-		"FreqMax ":  freqMax,
-		"Family  ":  family,
-		"Modelid ":  modelid,
+		"Core":      core,
+		"Thread":    thread,
+		"FreqMax":   freqMax,
+		"Family":    family,
+		"Modelid":   modelid,
 		"Stepping":  stepping,
-		"Cachet ":   cachet,
+		"Cachet":    cachet,
 		"Microcode": microcode,
 	}
 
@@ -365,9 +365,15 @@ func CpuOverviewPage() fyne.CanvasObject {
 
 	dataCPUInfo := CPUdata()
 
+	//core := widget.NewLabel("Core...") //Overview
+
+	//core.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Core"])) //1 แสดง cpu info
+
+	//(fmt.Sprintf("%s\n", dataCPUInfo[""])),
+
 	return container.NewVBox(
 
-		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
+		//widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["Overview"])), //1 แสดง cpu info
 		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["ModelName"])),
 		widget.NewSeparator(),
 		widget.NewLabel(fmt.Sprintf("%s\n", dataCPUInfo["VendorID"])),

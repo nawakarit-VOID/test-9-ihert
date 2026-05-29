@@ -54,7 +54,7 @@ func CreateWindow() {
 	cpuuse := container.NewScroll(
 		container.NewVBox(
 			//widget.NewCard("CPU Information", "", container.NewVBox(
-			//cpuinfo.CpuPage(),
+
 			usageLabel,
 		))
 
