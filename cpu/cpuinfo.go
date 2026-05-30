@@ -46,7 +46,7 @@ func CPUdata() map[string]interface{} {
 	var cachet string
 	var microcode string
 
-	modelName = fmt.Sprintf("\nCPU : %s", info[0].ModelName)
+	modelName = fmt.Sprintf("CPU : %s", info[0].ModelName)
 	vendorID = fmt.Sprintf("Vendor : %s", info[0].VendorID)
 	core = fmt.Sprintf("Cores : %d", physical)
 	thread = fmt.Sprintf("Thread : %d", logical)
@@ -59,12 +59,12 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Detail
 	// ============================================================================
-	hyperthreading := fmt.Sprintf("\nHyperthreading: [ %v ]", logical > physical)
+	hyperthreading := fmt.Sprintf("Hyperthreading: [ %v ]", logical > physical)
 
 	var cpuThreadCoreSocketresult string //จำนวน thread
-	cpuThreadCoreSocketresult += ("[  Thread  ] : [ Core ] : [ Socket ]\n\n")
+	cpuThreadCoreSocketresult += ("[  Thread  ] : [ Core ] : [ Socket ]\n")
 	for i, cpu := range info {
-		cpuThreadCoreSocketresult += fmt.Sprintf("Thread [%d] : Core [%s] : Socket [%s]\n",
+		cpuThreadCoreSocketresult += fmt.Sprintf("\nThread [%d] : Core [%s] : Socket [%s]",
 			i, cpu.CoreID, cpu.PhysicalID)
 	}
 
@@ -81,11 +81,11 @@ func CPUdata() map[string]interface{} {
 	c3, xc3 := processValue(cpuInfo.Cache.L3)
 
 	var cache string //cpuid
-	cache += "[ Cache ]\n\n"
-	cache += fmt.Sprintf("L1d : %d %s\n", c1d, xc1d)
-	cache += fmt.Sprintf("L1i : %d %s\n", c1i, xc1i)
-	cache += fmt.Sprintf("L2 : %d %s\n", c2, xc2)
-	cache += fmt.Sprintf("L3 : %d %s\n", c3, xc3)
+	cache += "[ Cache ]\n"
+	cache += fmt.Sprintf("\nL1d : %d %s", c1d, xc1d)
+	cache += fmt.Sprintf("\nL1i : %d %s", c1i, xc1i)
+	cache += fmt.Sprintf("\nL2 : %d %s", c2, xc2)
+	cache += fmt.Sprintf("\nL3 : %d %s", c3, xc3)
 
 	//"BrandName":          cpuInfo.BrandName, //ชื่อ cpu
 	//"l1d_cache": cpuInfo.Cache.L1D,
@@ -142,8 +142,13 @@ func CPUdata() map[string]interface{} {
 // monitor
 // ============================================================================
 type StCPUData struct {
-	Usage      string //
-	Timesusage string
+	Usage string //
+	//Timesusage string
+	TimesTotalAvglabel string
+	TimesTotalAvg      string
+	TimesSec           string
+	TimesHms           string
+	MeaningLabel       string
 
 	UsagePerCore   []float64 // CPU usage ต่อ core
 	PercentPerCore string
@@ -289,8 +294,13 @@ func (m *CPUMonitor) Start() {
 			if len(percentTotal) > 0 {
 
 				data := StCPUData{
-					Usage:      usage,
-					Timesusage: timesusage,
+					Usage: usage,
+					//Timesusage: timesusage,
+					TimesTotalAvglabel: timesTotalAvglabel,
+					TimesTotalAvg:      timesTotalAvg,
+					TimesSec:           timesSec,
+					TimesHms:           timesHms,
+					MeaningLabel:       meaningLabel,
 				}
 				m.callback(data)
 			}
@@ -366,9 +376,10 @@ func Avg(value float64) (int, int, int) {
 // ============================================================================
 // รวม + เอาออก CpuOverviewPage
 // ============================================================================
-func CpuOverviewPage() fyne.CanvasObject {
+func CpuTabs() fyne.CanvasObject {
 	dataCPUInfo := CPUdata()
-	return container.NewVBox(
+
+	cpuOverviewPage := container.NewVBox(
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["ModelName"])),
 		widget.NewSeparator(),
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["VendorID"])),
@@ -387,31 +398,79 @@ func CpuOverviewPage() fyne.CanvasObject {
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Microcode"])),
 	)
 
-}
-
-// ============================================================================
-// รวม + เอาออก CpuDetailPage
-// ============================================================================
-func CpuDetailPage() fyne.CanvasObject {
-	dataCPUInfo := CPUdata()
-	return container.NewVBox(
+	cpuDetailPage := container.NewVBox(
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Hyperthreading"])),
 		widget.NewSeparator(),
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["CpuThreadCoreSocketresult"])),
 		widget.NewSeparator(),
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Cache"])), //cpuid
 	)
+
+	cpuFlagsFeaturePage := container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
+	)
+
+	usageLabel := widget.NewLabel("usageLabel...")
+
+	//cpuUsagePage
+	cpuUsagePage := container.NewVBox(
+		usageLabel,
+		widget.NewSeparator(),
+	)
+
+	//TimesusageLabel := widget.NewLabel("TimesusageLabel...")
+	timesTotalAvglabel := widget.NewLabel("timesTotalAvglabel...")
+	timesTotalAvg := widget.NewLabel("timesTotalAvg...")
+	timesSec := widget.NewLabel("timesSec...")
+	timesHms := widget.NewLabel("timesHms...")
+	meaningLabel := widget.NewLabel("meaningLabel...")
+
+	//cpuTimesusagePage
+	cpuTimesusagePage := container.NewVBox(
+		//TimesusageLabel,
+		timesTotalAvglabel,
+		widget.NewSeparator(),
+		timesTotalAvg,
+		widget.NewSeparator(),
+		timesSec,
+		widget.NewSeparator(),
+		timesHms,
+		widget.NewSeparator(),
+		meaningLabel,
+	)
+
+	// สร้าง monitor cpu
+	monitor := NewCPUMonitor(1*time.Second, func(data StCPUData) {
+		fyne.Do(func() {
+			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) //4 // แสดง usage รวม
+			//TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5 แสดง timeusage
+			timesTotalAvglabel.SetText(fmt.Sprintf("%s", data.TimesTotalAvglabel))
+			timesTotalAvg.SetText(fmt.Sprintf("%s", data.TimesTotalAvg))
+			timesSec.SetText(fmt.Sprintf("%s", data.TimesSec))
+			timesHms.SetText(fmt.Sprintf("%s", data.TimesHms))
+			meaningLabel.SetText(fmt.Sprintf("%s", data.MeaningLabel))
+
+		})
+	})
+
+	monitor.Start() // เริ่ม monitoring
+
+	return container.NewAppTabs(
+		//container.NewTabItem("TEST", container.NewScroll(xLabel)),
+		container.NewTabItem("Overview", container.NewScroll(cpuOverviewPage)),
+		container.NewTabItem("Detail", container.NewScroll(cpuDetailPage)),
+		container.NewTabItem("Flags Feature", container.NewScroll(cpuFlagsFeaturePage)),
+		container.NewTabItem("Usage", container.NewScroll(cpuUsagePage)),
+		container.NewTabItem("TimeUsage", container.NewScroll(cpuTimesusagePage)),
+	)
 }
 
 // ============================================================================
+// รวม + เอาออก CpuDetailPage
+// ============================================================================
+// ============================================================================
 // รวม + เอาออก CpuFlagsFeaturePage
 // ============================================================================
-func CpuFlagsFeaturePage() fyne.CanvasObject {
-	dataCPUInfo := CPUdata()
-	return container.NewVBox(
-		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
-	)
-}
 
 /*
 // ============================================================================

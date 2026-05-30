@@ -42,15 +42,13 @@ func CreateWindow() {
 	// สร้าง monitor cpu
 	monitor := cpuinfo.NewCPUMonitor(1*time.Second, func(data cpuinfo.StCPUData) {
 		fyne.Do(func() {
-			usageLabel.SetText(fmt.Sprintf("%s", data.Usage))           //4 // แสดง usage รวม
-			TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5 แสดง timeusage
+			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) //4 // แสดง usage รวม
+			//TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5 แสดง timeusage
 		})
 	})
 	monitor.Start() // เริ่ม monitoring
 
-	cpuOverviewPage := cpuinfo.CpuOverviewPage()         //Overview
-	cpuDetailPage := cpuinfo.CpuDetailPage()             //Detail
-	cpuFlagsFeaturePage := cpuinfo.CpuFlagsFeaturePage() //FlagsFeature
+	cpuTabs := cpuinfo.CpuTabs()
 
 	//จัดหน้า
 	cpuuse := container.NewScroll(
@@ -66,10 +64,6 @@ func CreateWindow() {
 		))
 
 	cpu := container.NewAppTabs(
-		//container.NewTabItem("TEST", container.NewScroll(xLabel)),
-		container.NewTabItem("Overview", container.NewScroll(cpuOverviewPage)),
-		container.NewTabItem("Detail", container.NewScroll(cpuDetailPage)),
-		container.NewTabItem("Flags Feature", container.NewScroll(cpuFlagsFeaturePage)),
 
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		container.NewTabItem("TimeUsage", container.NewScroll(cputimeusage)),
@@ -78,8 +72,8 @@ func CreateWindow() {
 	)
 
 	tabs := container.NewAppTabs(
-		container.NewTabItem("CPU", container.NewScroll(cpu)),
-		//container.NewTabItem("Cache", container.NewScroll(nil)),
+		container.NewTabItem("CPU", container.NewScroll(cpuTabs)),
+		container.NewTabItem("cpu", container.NewScroll(cpu)),
 		//container.NewTabItem("Features", nil),
 		//container.NewTabItem("Security", container.NewScroll(nil)),
 		//container.NewTabItem("Virtualization", container.NewScroll(nil)),
