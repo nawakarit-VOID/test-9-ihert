@@ -21,19 +21,7 @@ func CPUdata() map[string]interface{} {
 	// ============================================================================
 	// Overview
 	// ============================================================================
-	/*
-		var overview string // gopsutil
-		overview += fmt.Sprintf("\nCPU : %s\n", info[0].ModelName)
-		overview += fmt.Sprintf("Vendor : %s\n", info[0].VendorID)
-		overview += fmt.Sprintf("Cores : %d\n", physical)
-		overview += fmt.Sprintf("Thread : %d\n", logical)
-		overview += fmt.Sprintf("FreqMax : %.2f GHz\n", info[0].Mhz/1000)
-		overview += fmt.Sprintf("Family : %s\n", info[0].Family)
-		overview += fmt.Sprintf("Modelid : %s\n", info[0].Model)
-		overview += fmt.Sprintf("Stepping : %d\n", info[0].Stepping)
-		overview += fmt.Sprintf("Cache : %d MB\n", info[0].CacheSize/1024)
-		overview += fmt.Sprintf("Microcode : %s\n", info[0].Microcode)
-	*/
+
 	//แยกส่วน
 	var modelName string
 	var vendorID string
@@ -70,10 +58,6 @@ func CPUdata() map[string]interface{} {
 
 	// cpuid
 	cpuInfo := cpuid.CPU
-	//c1d := cpuInfo.Cache.L1D
-	//c1i := cpuInfo.Cache.L1I
-	//c2 := cpuInfo.Cache.L2
-	//c3 := cpuInfo.Cache.L3
 
 	c1d, xc1d := processValue(cpuInfo.Cache.L1D)
 	c1i, xc1i := processValue(cpuInfo.Cache.L1I)
@@ -94,16 +78,11 @@ func CPUdata() map[string]interface{} {
 	//"l3_cache":  cpuInfo.Cache.L3,
 	//"has_avx2": cpuInfo.Has(cpuid.AVX2),
 
-	var detail string //
-	detail += hyperthreading
-	detail += cpuThreadCoreSocketresult
-	detail += cache //cpuid
-
 	// ============================================================================
 	// Flags Feature
 	// ============================================================================
 	var flagsfeature string
-	flagsfeature += "\n"
+	//flagsfeature += "\n"
 	for i, flag := range info[0].Flags {
 		flagsfeature += flag
 		if (i+1)%6 == 0 { // ทีละ 6 flags ต่อบรรทัด
@@ -115,21 +94,17 @@ func CPUdata() map[string]interface{} {
 
 	return map[string]interface{}{
 		// gopsutil
-		//"Overview":     overview,
-		"Detail":       detail,
-		"FlagsFeature": flagsfeature,
-
-		"ModelName": modelName,
-		"VendorID":  vendorID,
-		"Core":      core,
-		"Thread":    thread,
-		"FreqMax":   freqMax,
-		"Family":    family,
-		"Modelid":   modelid,
-		"Stepping":  stepping,
-		"Cachet":    cachet,
-		"Microcode": microcode,
-
+		"FlagsFeature":              flagsfeature,
+		"ModelName":                 modelName,
+		"VendorID":                  vendorID,
+		"Core":                      core,
+		"Thread":                    thread,
+		"FreqMax":                   freqMax,
+		"Family":                    family,
+		"Modelid":                   modelid,
+		"Stepping":                  stepping,
+		"Cachet":                    cachet,
+		"Microcode":                 microcode,
 		"Hyperthreading":            hyperthreading,
 		"CpuThreadCoreSocketresult": cpuThreadCoreSocketresult,
 		"Cache":                     cache, //cpuid
@@ -144,15 +119,14 @@ func CPUdata() map[string]interface{} {
 type StCPUData struct {
 	Usage string //
 	//Timesusage string
-	TimesTotalAvglabel string
-	TimesTotalAvg      string
-	TimesSec           string
-	TimesHms           string
-	MeaningLabel       string
-
-	UsagePerCore   []float64 // CPU usage ต่อ core
-	PercentPerCore string
-	Times          []cpu.TimesStat
+	UsagepercentTotal         string
+	UsagepercentPerCoreSTRING string
+	TimesTotalAvg             string
+	TimesSec                  string
+	TimesHms                  string
+	UsagePerCore              []float64 // CPU usage ต่อ core
+	PercentPerCore            string
+	Times                     []cpu.TimesStat
 	//////////////////////
 }
 type CPUMonitor struct {
@@ -184,16 +158,16 @@ func (m *CPUMonitor) Start() {
 			if err != nil {
 				continue
 			}
-			// แสดง usage ต่อ core
-			var PerCore string
-			for i, pc := range percentPerCore {
-				PerCore += fmt.Sprintf("Core [ %d ] : %.1f%%\n", i, pc)
-			}
+
 			//จัดเรียง usage
-			var usage string
-			usage += "\n"
-			usage += fmt.Sprintf("Usage Avg : %.2f\n\n", percentTotal[0])
-			usage += fmt.Sprintf("%s\n", PerCore)
+			usagepercentTotal := fmt.Sprintf("[ Usage Avg ] : %.2f%%", percentTotal[0])
+
+			// แสดง usage ต่อ core
+			var usagepercentPerCore string
+			usagepercentPerCore += "[ Usage PerCore ]\n"
+			for i, pc := range percentPerCore {
+				usagepercentPerCore += fmt.Sprintf("\nCore [ %d ] : %.1f%%", i, pc)
+			}
 
 			//cpu.Times()
 			times, err := cpu.Times(true)
@@ -201,20 +175,11 @@ func (m *CPUMonitor) Start() {
 				continue
 			}
 
-			var timesTotalAvglabel string
-			timesTotalAvglabel += "\n[ เฉลี่ย ]\n\n"
 			var timesTotalAvg string
-
 			var timesSec string
-			timesSec += "\n[ ข้อมูลดิบ ]\n\n"
-
+			timesSec += "[ ข้อมูลดิบ ]"
 			var timesHms string
-			timesHms += "\n[ แปลงเป็นเวลาสากล ]\n\n"
-
-			var meaningLabel string
-			meaningLabel += "\nความหมาย\n\n"
-			meaningLabel += "[ User : โปรแกรมผู้ใช้ ]\n[ System : ระบบ ]\n[ Idle : ไม่ได้ทำอะไร ]\n[ Nice : เวลาปรับ priority ]\n[ Iowait : CPU รอ I/O ]\n[ Irq : Hardware ขัด ]\n[ Softirq : Software ขัดจังหวะ ]\n[ Steal : VM ถูก hyper แย่ง ]\n[ Guest : ใช้ guest virtual ]\n[ GuestNice : VM ใช้แบบ nice priority ]\n"
-
+			timesHms += "[ แปลงเป็นเวลาสากล ]"
 			var totalUser float64
 			var totalSystem float64
 			var totalIdle float64
@@ -242,7 +207,7 @@ func (m *CPUMonitor) Start() {
 				nCPU := d.CPU
 				//วินาที *ดิบ
 				timesSec += fmt.Sprintf(
-					"[ %s ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s\n",
+					"\n[ %s ] | User: %.2f s | System: %.2f s | Idle: %.2f s | Nice: %.2f s | Iowait: %.2f s | Irq %.2f s | Softirq %.2f s | Steal %.2f s | Guest %.2f s | GuestNice %.2f s",
 					nCPU, d.User, d.System, d.Idle, d.Nice, d.Iowait, d.Irq, d.Softirq, d.Steal, d.Guest, d.GuestNice)
 
 				//แปลงเป็นเวลาสากล
@@ -259,7 +224,7 @@ func (m *CPUMonitor) Start() {
 
 				//จัดเรียงเวลาสากล
 				timesHms += fmt.Sprintf(
-					"[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					"\n[ %s ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]",
 					nCPU, thUser, tmUser, tsUser, thSystem, tmSystem, tsSystem, thIdle, tmIdle, tsIdle, thNice, tmNice, tsNice, thIowait, tmIowait, tsIowait, thIrq, tmIrq, tsIrq, thSoftirq, tmSoftirq, tsSoftirq, thSteal, tmSteal, tsSteal, thGuest, tmGuest, tsGuest, thGuestNice, tmGuestNice, tsGuestNice)
 
 				//AVG//เวลาโดยเฉลี่ย
@@ -276,31 +241,24 @@ func (m *CPUMonitor) Start() {
 				hGuestNice, mGuestNice, sGuestNice := Avg(totalGuestNice)
 				//จัดเรียงเวลาโดยเฉลี่ย
 				timesTotalAvg = fmt.Sprintf(
-					"[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]\n",
+					"[ เฉลี่ย ]\n[ AVG ] | User [ %d : %d : %d ] | System [ %d : %d : %d ] | Idle [ %d : %d : %d ] | Nice [ %d : %d : %d ] | Iowait [ %d : %d : %d ] | Irq [ %d : %d : %d ] | Softirq [ %d : %d : %d ] | Steal [ %d : %d : %d ] | Guest [ %d : %d : %d ] | GuestNice [ %d : %d : %d ]",
 					hUser, mUser, sUser, hSystem, mSystem, sSysteme, hIdle, mIdle, sIdle, hNice, mNice, sNice, hIowait, mIowait, sIowait, hIrq, mIrq, sIrq, hSoftirq, mSoftirq, sSoftirq, hSteal, mSteal, sSteal, hGuest, mGuest, sGuest, hGuestNice, mGuestNice, sGuestNice)
-
 			}
 
 			//จัดเรียง timesusage
-			var timesusage string
-			timesusage += timesTotalAvglabel
-			timesusage += timesTotalAvg
-			timesusage += timesSec
-			timesusage += timesHms
-			timesusage += meaningLabel
 
 			//	timesusage += meanLabel
 
 			if len(percentTotal) > 0 {
 
 				data := StCPUData{
-					Usage: usage,
+					//Usage: usage,
 					//Timesusage: timesusage,
-					TimesTotalAvglabel: timesTotalAvglabel,
-					TimesTotalAvg:      timesTotalAvg,
-					TimesSec:           timesSec,
-					TimesHms:           timesHms,
-					MeaningLabel:       meaningLabel,
+					UsagepercentTotal:         usagepercentTotal,
+					UsagepercentPerCoreSTRING: usagepercentPerCore,
+					TimesTotalAvg:             timesTotalAvg,
+					TimesSec:                  timesSec,
+					TimesHms:                  timesHms,
 				}
 				m.callback(data)
 			}
@@ -410,46 +368,42 @@ func CpuTabs() fyne.CanvasObject {
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
 	)
 
-	usageLabel := widget.NewLabel("usageLabel...")
-
+	//usageLabel := widget.NewLabel("usageLabel...")
+	usagepercentTotalLabel := widget.NewLabel("usagepercentTotalLabel...")
+	usagePerCoreSTRINGLabel := widget.NewLabel("usagePerCoreSTRINGLabel...")
 	//cpuUsagePage
 	cpuUsagePage := container.NewVBox(
-		usageLabel,
+		//usageLabel,
+		usagepercentTotalLabel,
+		widget.NewSeparator(),
+		usagePerCoreSTRINGLabel,
 		widget.NewSeparator(),
 	)
 
-	//TimesusageLabel := widget.NewLabel("TimesusageLabel...")
-	timesTotalAvglabel := widget.NewLabel("timesTotalAvglabel...")
 	timesTotalAvg := widget.NewLabel("timesTotalAvg...")
 	timesSec := widget.NewLabel("timesSec...")
 	timesHms := widget.NewLabel("timesHms...")
-	meaningLabel := widget.NewLabel("meaningLabel...")
 
 	//cpuTimesusagePage
 	cpuTimesusagePage := container.NewVBox(
-		//TimesusageLabel,
-		timesTotalAvglabel,
-		widget.NewSeparator(),
 		timesTotalAvg,
 		widget.NewSeparator(),
 		timesSec,
 		widget.NewSeparator(),
 		timesHms,
 		widget.NewSeparator(),
-		meaningLabel,
+		widget.NewLabel("[ ความหมาย ]\n[ User : โปรแกรมผู้ใช้ ]\n[ System : ระบบ ]\n[ Idle : ไม่ได้ทำอะไร ]\n[ Nice : เวลาปรับ priority ]\n[ Iowait : CPU รอ I/O ]\n[ Irq : Hardware ขัด ]\n[ Softirq : Software ขัดจังหวะ ]\n[ Steal : VM ถูก hyper แย่ง ]\n[ Guest : ใช้ guest virtual ]\n[ GuestNice : VM ใช้แบบ nice priority ]"),
 	)
 
 	// สร้าง monitor cpu
 	monitor := NewCPUMonitor(1*time.Second, func(data StCPUData) {
 		fyne.Do(func() {
-			usageLabel.SetText(fmt.Sprintf("%s", data.Usage)) //4 // แสดง usage รวม
+			usagepercentTotalLabel.SetText(fmt.Sprintf("%s", data.UsagepercentTotal))          //4 // แสดง usage รวม
+			usagePerCoreSTRINGLabel.SetText(fmt.Sprintf("%s", data.UsagepercentPerCoreSTRING)) //4 // แสดง usage รวม
 			//TimesusageLabel.SetText(fmt.Sprintf("%s", data.Timesusage)) //5 แสดง timeusage
-			timesTotalAvglabel.SetText(fmt.Sprintf("%s", data.TimesTotalAvglabel))
 			timesTotalAvg.SetText(fmt.Sprintf("%s", data.TimesTotalAvg))
 			timesSec.SetText(fmt.Sprintf("%s", data.TimesSec))
 			timesHms.SetText(fmt.Sprintf("%s", data.TimesHms))
-			meaningLabel.SetText(fmt.Sprintf("%s", data.MeaningLabel))
-
 		})
 	})
 
