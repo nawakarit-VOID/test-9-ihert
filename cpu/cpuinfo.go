@@ -386,6 +386,7 @@ func CpuOverviewPage() fyne.CanvasObject {
 		widget.NewSeparator(),
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Microcode"])),
 	)
+
 }
 
 // ============================================================================
@@ -401,3 +402,24 @@ func CpuDetailPage() fyne.CanvasObject {
 		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["Cache"])), //cpuid
 	)
 }
+
+// ============================================================================
+// รวม + เอาออก CpuFlagsFeaturePage
+// ============================================================================
+func CpuFlagsFeaturePage() fyne.CanvasObject {
+	dataCPUInfo := CPUdata()
+	return container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
+	)
+}
+
+/*
+// ============================================================================
+// รวม + เอาออก CpuFlagsFeaturePage
+// ============================================================================
+func CpuFlagsFeaturePage() fyne.CanvasObject {
+	dataCPUInfo := CPUdata()
+	return container.NewVBox(
+		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
+	)
+}*/

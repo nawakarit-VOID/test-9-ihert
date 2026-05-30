@@ -18,11 +18,11 @@ func CreateWindow() {
 	w := a.NewWindow("CPU Info")
 
 	//cpu
-	dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
+	//dataCPUInfo := cpuinfo.CPUdata() //ดึงข้อมูลจากไฟล์ cpuinfo.go
 	//sub cpu
 	//overviewlabel := widget.NewLabel("Overviewlabel...") //Overview
 	//detailLabel := widget.NewLabel("detailLabel...")
-	flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
+	//flagsStrlabel := widget.NewLabel("flagsStrlabel...") //flagfeature
 	usageLabel := widget.NewLabel("usageLabel...")
 	TimesusageLabel := widget.NewLabel("TimesusageLabel...")
 
@@ -36,7 +36,7 @@ func CreateWindow() {
 	fyne.Do(func() {
 		//overviewlabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Overview"]))     //1 แสดง cpu info
 		//detailLabel.SetText(fmt.Sprintf("%s\n", dataCPUInfo["Detail"]))         //2 แสดง รายละเอียด
-		flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"])) //3 แสดง feature
+		//flagsStrlabel.SetText(fmt.Sprintf("%v\n", dataCPUInfo["FlagsFeature"])) //3 แสดง feature
 	})
 
 	// สร้าง monitor cpu
@@ -48,8 +48,10 @@ func CreateWindow() {
 	})
 	monitor.Start() // เริ่ม monitoring
 
-	cpuOverviewPage := cpuinfo.CpuOverviewPage() //Overview
-	cpuDetailPage := cpuinfo.CpuDetailPage()     //Detail
+	cpuOverviewPage := cpuinfo.CpuOverviewPage()         //Overview
+	cpuDetailPage := cpuinfo.CpuDetailPage()             //Detail
+	cpuFlagsFeaturePage := cpuinfo.CpuFlagsFeaturePage() //FlagsFeature
+
 	//จัดหน้า
 	cpuuse := container.NewScroll(
 		container.NewVBox(
@@ -67,7 +69,8 @@ func CreateWindow() {
 		//container.NewTabItem("TEST", container.NewScroll(xLabel)),
 		container.NewTabItem("Overview", container.NewScroll(cpuOverviewPage)),
 		container.NewTabItem("Detail", container.NewScroll(cpuDetailPage)),
-		container.NewTabItem("Flags Feature", container.NewScroll(flagsStrlabel)),
+		container.NewTabItem("Flags Feature", container.NewScroll(cpuFlagsFeaturePage)),
+
 		container.NewTabItem("Usage", container.NewScroll(cpuuse)),
 		container.NewTabItem("TimeUsage", container.NewScroll(cputimeusage)),
 	//cpu.Times()
