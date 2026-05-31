@@ -332,7 +332,7 @@ func Avg(value float64) (int, int, int) {
 }
 
 // ============================================================================
-// รวม + เอาออก CpuOverviewPage
+// รวม + เอาออก CpuTabs
 // ============================================================================
 func CpuTabs() fyne.CanvasObject {
 	dataCPUInfo := CPUdata()
@@ -418,21 +418,3 @@ func CpuTabs() fyne.CanvasObject {
 		container.NewTabItem("TimeUsage", container.NewScroll(cpuTimesusagePage)),
 	)
 }
-
-// ============================================================================
-// รวม + เอาออก CpuDetailPage
-// ============================================================================
-// ============================================================================
-// รวม + เอาออก CpuFlagsFeaturePage
-// ============================================================================
-
-/*
-// ============================================================================
-// รวม + เอาออก CpuFlagsFeaturePage
-// ============================================================================
-func CpuFlagsFeaturePage() fyne.CanvasObject {
-	dataCPUInfo := CPUdata()
-	return container.NewVBox(
-		widget.NewLabel(fmt.Sprintf("%s", dataCPUInfo["FlagsFeature"])),
-	)
-}*/
